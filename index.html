@@ -1,0 +1,1291 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <title>溫書</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body {
+      font-family: Arial, "微軟正黑體", sans-serif;
+      background: #f3f3f3;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 900px;
+      margin: 30px auto;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 12px #bbb;
+      padding: 30px 20px;
+    }
+    h1 {
+      text-align: center;
+      font-size: 32px;
+      margin-bottom: 25px;
+    }
+    .btn {
+      background: #1976d2;
+      color: #fff;
+      border: none;
+      padding: 16px 30px;
+      border-radius: 6px;
+      cursor: pointer;
+      margin: 15px 0;
+      font-size: 20px;
+      font-weight: 600;
+      transition: background 0.3s ease;
+      width: 100%;
+      max-width: 300px;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .btn:active {
+      background: #1565c0;
+    }
+    .search-section {
+      margin-bottom: 30px;
+      text-align: center;
+    }
+    #searchInput {
+      width: 60%;
+      max-width: 400px;
+      padding: 12px 15px;
+      font-size: 18px;
+      border-radius: 6px;
+      border: 1.5px solid #ccc;
+      box-sizing: border-box;
+      margin-bottom: 12px;
+    }
+    .search-result {
+      margin: 12px 0 28px 0;
+      padding: 18px 22px;
+      border-radius: 8px;
+      background: #e8f5e9;
+      font-size: 18px;
+      line-height: 1.4;
+    }
+    .search-result .answer {
+      color: #2e7d32;
+      font-weight: 700;
+    }
+    .hidden {
+      display: none;
+    }
+    .q-num {
+      color: #666;
+      font-size: 16px;
+      margin-bottom: 12px;
+      text-align: center;
+    }
+    #questionText {
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+  
+    .question-en {
+      font-weight: 600;
+      font-size: 22px;
+      color: #222;
+      margin-bottom: 8px;
+      font-family: Arial, "微軟正黑體", "Microsoft JhengHei", sans-serif;
+    }
+  
+    .question-tc {
+      font-weight: 500;
+      font-size: 18px;
+      color: #555;
+      margin-bottom: 12px;
+      font-family: "微軟正黑體", "Microsoft JhengHei", sans-serif;
+    }
+   
+    .choices {
+      margin: 30px 0;
+    }
+    .choice {
+      display: block;
+      margin: 14px 0;
+      padding: 18px 20px;
+      border-radius: 6px;
+      border: 1.5px solid #ccc;
+      cursor: pointer;
+      background: #f9f9f9;
+      width: 100%;
+      text-align: left;
+      font-size: 20px;
+      font-weight: 500;
+      transition: background 0.2s ease, border-color 0.2s ease;
+      box-sizing: border-box;
+    }
+    .choice.correct {
+      color: #1b5e20;
+      border-color: #4caf50;
+      font-weight: 700;
+      background: #e8f5e9;
+    }
+    .choice.incorrect {
+      color: #b71c1c;
+      border-color: #e53935;
+      font-weight: 700;
+      background: #ffebee;
+    }
+    .choice:disabled {
+      cursor: not-allowed;
+      opacity: 0.7;
+    }
+    #feedback {
+      margin-top: 18px;
+      font-weight: 700;
+      font-size: 20px;
+      text-align: center;
+    }
+    #nextBtn, #restartBtn {
+      max-width: 170px;
+      margin: 20px ;
+      display: none;
+    }
+    #restartBtn {
+      display: inline-block;
+      margin-left: 15px;
+    }
+    
+    @media (max-width: 700px) {
+      .container {
+        padding: 20px 15px;
+        max-width: 100%;
+        margin: 10px;
+      }
+      h1 {
+        font-size: 28px;
+        margin-bottom: 20px;
+      }
+      #searchInput {
+        width: 100%;
+        max-width: none;
+        font-size: 16px;
+      }
+      .btn {
+        font-size: 18px;
+        padding: 14px 20px;
+        max-width: 100%;
+      }
+      .choice {
+        font-size: 18px;
+        padding: 14px 16px;
+        margin: 12px 0;
+      }
+      .question-en {
+        font-size: 22px;
+      }
+      .question-tc {
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>溫書</h1>
+
+    <div class="search-section">
+      <input type="text" id="searchInput" placeholder="請輸入英文關鍵字搜尋題目..." />
+      <button class="btn" onclick="searchQuestions()">搜尋</button>
+    
+      <div id="searchResults"></div>
+    </div>
+
+    <div id="examSection">
+      <button class="btn" onclick="startExam()">開始模擬考試</button>
+    </div>
+
+    <div id="questionSection" class="hidden">
+      <div class="q-num" id="qNum"></div>
+      <div id="questionText"></div>
+      <div class="choices" id="choices"></div>
+      <div id="feedback"></div>
+      <button class="btn" onclick="nextQuestion()" id="nextBtn">下一題</button>
+<button class="btn" onclick="restartExam()" id="restartBtn">重新開始</button>
+
+
+      
+   </div>
+  </div>
+
+<script>
+
+const questions = [
+  {
+    QID: 1,
+    "Question(E)": "What is the primary purpose of a trading system framework?",
+    "Question(TC)": "交易系統框架的主要目的是什麼？",
+    A: "To visualize price charts<br>用於可視化價格圖表",
+    B: "To execute trades automatically and manage risks<br>自動執行交易並管理風險",
+    C: "To backtest strategies<br>回測策略",
+    D: "To store historical data<br>儲存歷史數據",
+    Ans: "B"
+  },
+  {
+    QID: 2,
+    "Question(E)": "What is MetaTrader 5 (MT5) primarily used for?",
+    "Question(TC)": "MetaTrader 5 (MT5) 主要用於什麼？",
+    A: "Video editing<br>視頻剪輯",
+    B: "Algorithmic trading and market analysis<br>算法交易與市場分析",
+    C: "Social media management<br>社交媒體管理",
+    D: "Email marketing<br>電子郵件行銷",
+    Ans: "B"
+  },
+
+  {
+    QID: 3,
+    "Question(E)": 'What is a "Buy Limit" order in MT5?',
+    "Question(TC)": '在 MT5 中，「Buy Limit」限價買單是什麼？',
+    A: "An order to buy below the current price<br>低於當前價格的買入訂單",
+    B: "An order to sell above the current price<br>高於當前價格的賣出訂單",
+    C: "An order to buy above the current market price<br>高於當前市場價格的買入訂單",
+    D: "An order to sell below the current price<br>低於當前價格的賣出訂單",
+    Ans: "A"
+  },
+  {
+    QID: 4,
+    "Question(E)": "What does leverage in trading allow you to do?",
+    "Question(TC)": "槓桿在交易中讓你可以做什麼？",
+    A: "Reduce your purchasing power<br>降低購買力",
+    B: "Control a larger position than your account balance<br>控制超出賬戶餘額的更大頭寸",
+    C: "Eliminate all trading risks<br>消除所有交易風險",
+    D: "Avoid using margin<br>避免使用保證金",
+    Ans: "B"
+  },
+  {
+    QID: 5,
+    "Question(E)": "Which library is often used in Python to interact with MT5?",
+    "Question(TC)": "在 Python 中與 MT5 互動常用哪個函式庫？",
+    A: "NumPy",
+    B: "MetaTrader5",
+    C: "Matplotlib",
+    D: "TensorFlow",
+    Ans: "B"
+  },
+  {
+    QID: 6,
+    "Question(E)": "What is TradingView best known for?",
+    "Question(TC)": "TradingView 最知名的功能是什麼？",
+    A: "Email automation<br>電子郵件自動化",
+    B: "Charting and social trading platform<br>圖表與社交交易平台",
+    C: "Word processing<br>文字處理",
+    D: "Cloud storage<br>雲端儲存",
+    Ans: "C"
+  },
+  {
+    QID: 7,
+    "Question(E)": 'What is a "Sell Stop" order in MT5?',
+    "Question(TC)": '在 MT5 中，「Sell Stop」止損賣單是什麼？',
+    A: "An order to sell above the current price<br>高於當前價格的賣出訂單",
+    B: "An order to buy below the current price<br>低於當前價格的買入訂單",
+    C: "An order to sell below the current market price<br>低於當前市場價格的賣出訂單",
+    D: "An order to buy above the current price<br>高於當前價格的買入訂單",
+    Ans: "B"
+  },
+  {
+    QID: 8,
+    "Question(E)": 'What is the function of the "stop loss" in trading?',
+    "Question(TC)": '交易中的「止損」功能是什麼？',
+    A: "To maximize profit<br>最大化利潤",
+    B: "To limit potential losses<br>限制潛在損失",
+    C: "To increase leverage<br>提高槓桿",
+    D: "To close all positions automatically<br>自動關閉所有頭寸",
+    Ans: "B"
+  },
+  {
+    QID: 9,
+    "Question(E)": 'What must you do before running  MT5 to trade?',
+    "Question(TC)": '在運行 MT5 進行交易前必須做什麼？',
+    A: "Install MetaTrader 5 terminal<br>安裝 MetaTrader 5 終端機",
+    B: "Open TradingView<br>打開 TradingView",
+    C: "Subscribe to a newsletter<br>訂閱電子報",
+    D: "Update your operating system<br>更新操作系統",
+    Ans: "A"
+  },
+  {
+    QID: 10,
+    "Question(E)": 'Which of the following is a benefit of using Python for trading automation?',
+    "Question(TC)": '使用 Python 進行交易自動化的優點是什麼？',
+    A: "Manual order entry<br>手動下單",
+    B: "Reduced computer performance<br>降低電腦效能",
+    C: "Increased manual workload<br>增加手動工作量",
+    D: "Automated and systematic execution of strategies<br>策略自動化與系統化執行",
+    Ans: "D"
+  },
+ 
+{
+  QID: 11,
+  "Question(E)": "If a trader makes 100 trades and 60 of them are profitable, what is the win rate?",
+  "Question(TC)": "如果一位交易者進行了100筆交易，其中60筆是獲利的，勝率是多少？",
+  A: "40%",
+  B: "50%",
+  C: "60%",
+  D: "70%",
+  Ans: "C"
+},
+{
+  QID: 12,
+  "Question(E)": "What does the win ratio (win rate) in trading represent?",
+  "Question(TC)": "交易中的勝率代表什麼？",
+  A: "The average profit per trade<br>每筆交易的平均獲利",
+  B: "The percentage of profitable trades out of total trades<br>獲利交易占總交易的百分比",
+  C: "The number of trades per day<br>每天的交易次數",
+  D: "The number of trades per day<br>每天的交易次數",
+  Ans: "B"
+},
+{
+  QID: 13,
+  "Question(E)": "How is the win rate calculated in trading?",
+  "Question(TC)": "交易中如何計算勝率？",
+  A: "(Number of losing trades / Total trades) × 100<br>(虧損交易數 / 總交易數) × 100",
+  B: "(Number of winning trades / Total trades) × 100<br>(獲利交易數 / 總交易數) × 100",
+  C: "(Total profit / Number of trades) × 100<br>(總獲利 / 交易數) × 100",
+  D: "(Total trades / Number of winning trades) × 100<br>(總交易數 / 獲利交易數) × 100",
+  Ans: "B"
+},
+{
+  QID: 14,
+  "Question(E)": "What does the risk-reward ratio in trading measure?",
+  "Question(TC)": "交易中的風險報酬比是衡量什麼？",
+  A: "The number of trades placed in a day<br>每天的下單次數",
+  B: "The potential profit relative to the possible loss of a trade<br>每筆交易可能獲利與可能虧損的比率",
+  C: "The size of your trading account<br>交易帳戶的規模",
+  D: "The number of winning trades... 獲利交易的數量",
+  Ans: "B"
+},
+{
+  QID: 15,
+  "Question(E)": "If you risk $100 on a trade with a potential profit of $300, what is your risk-reward ratio?",
+  "Question(TC)": "如果你在一筆交易中冒100美元的風險，潛在獲利為300美元，風險報酬比是多少？",
+  A: "4:1",
+  B: "1:3",
+  C: "1:1",
+  D: "2:1",
+  Ans: "B"
+},
+{
+  QID: 16,
+  "Question(E)": "With a risk-reward ratio of 1:2, what is the minimum win rate needed to break even?",
+  "Question(TC)": "當風險報酬比為1:2時，打平所需的最低勝率是多少？",
+  A: "50%",
+  B: "33%",
+  C: "25%",
+  D: "66%",
+  Ans: "B"
+},
+{
+  QID: 17,
+  "Question(E)": "Why is it important to use a favorable risk-reward ratio in trading?",
+  "Question(TC)": "為什麼在交易中要使用有利的風險報酬比？",
+  A: "It guarantees profits on every trade<br>保證每筆交易都獲利",
+  B: "It helps filter out unfavorable setups and manage risk<br>有助於篩選不利的機會並管理風險",
+  C: "It increases the number of trades you can place<br>增加下單次數",
+  D: "It eliminates all trading risks<br>消除所有交易風險",
+  Ans: "B"
+},
+{
+  QID: 18,
+  "Question(E)": "What is the first step in applying the scientific method to trading strategy development?",
+  "Question(TC)": "應用科學方法於交易策略開發的第一步是什麼？",
+  A: "Backtesting the strategy<br>回測策略",
+  B: "Observing market data and asking a question<br>觀察市場數據並提出問題",
+  C: "Executing live trades<br>實盤交易",
+  D: "Publishing results<br>發表結果",
+  Ans: "B"
+},
+{
+  QID: 19,
+  "Question(E)": "In the context of trading, what is a hypothesis?",
+  "Question(TC)": "在交易中，什麼是「假設」？",
+  A: "A random guess about market direction<br>對市場方向的隨機猜測",
+  B: "A theory or assumption about how a market behaves, which can be tested<br>關於市場行為的理論或假設，可進行測試",
+  C: "A summary of past trades<br>過去交易的總結",
+  D: "A list of trading rules from another trader<br>其他交易者的規則列表",
+  Ans: "B"
+},
+{
+  QID: 20,
+  "Question(E)": "What is the main purpose of backtesting in the scientific method for trading?",
+  "Question(TC)": "在科學方法中，回測的主要目的是什麼？",
+  A: "To test the hypothesis using historical data and evaluate a strategy’s effectiveness<br>用歷史數據測試假設並評估策略有效性",
+  B: "To execute trades in real-time<br>即時執行交易",
+  C: "To collect live market news<br>收集即時市場新聞",
+  D: "To guarantee future profits<br>保證未來獲利",
+  Ans: "A"
+},
+{
+  QID: 21,
+  "Question(E)": "Why is it important to analyze the results after backtesting a trading strategy?",
+  "Question(TC)": "為什麼回測後要分析結果？",
+  A: "To automate trade execution<br>自動化下單",
+  B: "To increase the number of trades<br>增加交易次數",
+  C: "To determine if the hypothesis is supported and if the strategy has an edge<br>判斷假設是否成立及策略是否有優勢",
+  D: "To find the broker with the lowest fees<br>找到最低手續費的券商",
+  Ans: "C"
+},
+{
+  QID: 22,
+  "Question(E)": "Which of the following is a common technical indicator used in trading strategies?",
+  "Question(TC)": "下列哪一項是交易策略中常見的技術指標？",
+  A: "Moving Average Convergence Divergence (MACD)<br>移動平均收斂背離（MACD）",
+  B: "Sharpe Ratio<br>夏普比率",
+  C: "Delta Hedge<br>Delta對沖",
+  D: "Order Book Depth<br>委託簿深度",
+  Ans: "A"
+},
+{
+  QID: 23,
+  "Question(E)": "Which programming language is most commonly used in algorithmic trading due to its extensive libraries and simplicity?",
+  "Question(TC)": "在演算法交易中最常用的程式語言是？",
+  A: "Java",
+  B: "R",
+  C: "Python",
+  D: "C#",
+  Ans: "B"
+},
+{
+  QID: 24,
+  "Question(E)": "In a mean-reversion strategy, what condition typically triggers a trade?",
+  "Question(TC)": "在均值回歸策略中，通常什麼情況會觸發交易？",
+  A: "Price breaks resistance level<br>價格突破阻力位",
+  B: "MACD crosses signal line upward<br>MACD向上穿越訊號線",
+  C: "Volume spikes exceed 200% average<br>成交量激增超過平均200%",
+  D: "Z-score indicates deviation from historical mean<br>Z分數顯示偏離歷史均值",
+  Ans: "D"
+},
+{
+  QID: 25,
+  "Question(E)": "What does the Sharpe Ratio measure in strategy evaluation?",
+  "Question(TC)": "夏普比率在策略評估中衡量什麼？",
+  A: "Maximum drawdown<br>最大回撤",
+  B: "Profit factor<br>風險調整後的報酬",
+  C: "Risk-adjusted returns<br>獲利因子",
+  D: "Win rate percentage<br>勝率百分比",
+  Ans: "C"
+},
+{
+  QID: 26,
+  "Question(E)": "What is a primary advantage of using XGBoost for feature selection in trading algorithms?",
+  "Question(TC)": "在交易演算法中，XGBoost做特徵選擇的主要優點是什麼？",
+  A: "It ignores all input features<br>忽略所有輸入特徵",
+  B: "It automatically ranks features by importance, helping identify the most predictive variables<br>自動根據重要性排名特徵，有助於找出最具預測力的變數",
+  C: "It only works with time-series data<br>只適用於時間序列資料",
+  D: "It requires manual feature selection before training<br>訓練前需手動選擇特徵",
+  Ans: "B"
+},
+{
+  QID: 27,
+  "Question(E)": "Why are LSTM networks particularly suitable for financial time series prediction in trading strategies?",
+  "Question(TC)": "為什麼LSTM網路特別適合金融時間序列預測？",
+  A: "They are designed to process only static data<br>僅能處理靜態資料",
+  B: "They can capture long-term dependencies and patterns in sequential price data<br>能捕捉長期依賴與序列價格模式",
+  C: "They require no historical data<br>不需要歷史數據",
+  D: "They only work with categorical features<br>只適用於類別型特徵",
+  Ans: "B"
+},
+{
+  QID: 28,
+  "Question(E)": "What is the primary function of the Average True Range (ATR) indicator?",
+  "Question(TC)": "平均真實範圍（ATR）指標的主要功能是什麼？",
+  A: "Identify overbought/oversold conditions<br>辨識超買/超賣狀態",
+  B: "Measure market volatility<br>衡量市場波動性",
+  C: "Predict trend reversals<br>預測趨勢反轉",
+  D: "Calculate profit targets<br>計算獲利目標",
+  Ans: "B"
+},
+{
+  QID: 29,
+  "Question(E)": "What does the MACD histogram visually represent?",
+  "Question(TC)": "MACD柱狀圖視覺上代表什麼？",
+  A: "Volume divergence<br>成交量背離",
+  B: "Difference between MACD line and signal line<br>MACD線與訊號線的差值",
+  C: "Price consolidation periods<br>價格盤整期",
+  D: "Fibonacci retracement levels<br>費波那契回撤位",
+  Ans: "B"
+},
+{
+  QID: 30,
+  "Question(E)": "How is the Relative Strength Index (RSI) typically interpreted?",
+  "Question(TC)": "相對強弱指數（RSI）通常如何解讀？",
+  A: "Values above 70 indicate oversold conditions<br>大於70為超賣",
+  B: "Values below 30 indicate overbought conditions<br>小於30為超買",
+  C: "Values above 70 indicate overbought, below 30 oversold<br>大於70為超買，小於30為超賣",
+  D: "It predicts exact reversal points<br>預測精確反轉點",
+  Ans: "C"
+},
+{
+  QID: 31,
+  "Question(E)": 'What does a "death cross" in moving averages signify?',
+  "Question(TC)": "移動平均的「死亡交叉」意味著什麼？",
+  A: "Bullish momentum (50-day MA crosses above 200-day MA)<br>多頭動能（50日均線上穿200日均線）",
+  B: "Bearish momentum (50-day MA crosses below 200-day MA)<br>空頭動能（50日均線下穿200日均線）",
+  C: "Neutral market conditions<br>中性市場狀態",
+  D: "High volatility event<br>高波動事件",
+  Ans: "B"
+},
+{
+  QID: 32,
+  "Question(E)": "What is a key limitation of technical indicators?",
+  "Question(TC)": "技術指標的主要限制是什麼？",
+  A: "They guarantee profits<br>保證獲利",
+  B: "They're based on historical data and may produce false signals<br>依據歷史數據，可能產生假訊號",
+  C: "They eliminate all trading risk<br>消除所有交易風險",
+  D: "They work independently without price analysis<br>可獨立於價格分析運作",
+  Ans: "B"
+},
+{
+  QID: 33,
+  "Question(E)": "How does volume spike interpretation assist traders?",
+  "Question(TC)": "如何解讀成交量激增？",
+  A: "Confirms the validity of price breakouts/breakdowns<br>確認價格突破/跌破的有效性",
+  B: "Predicts dividend announcements<br>預測股息公告",
+  C: "Replaces fundamental analysis<br>取代基本面分析",
+  D: "Measures short interest exclusively<br>僅衡量空頭部位",
+  Ans: "A"
+},
+{
+  QID: 34,
+  "Question(E)": "How do Fibonacci retracement levels function in trading?",
+  "Question(TC)": "費波那契回撤在交易中有何功能？",
+  A: "Predict earnings dates<br>預測財報日期",
+  B: "Identify potential support/resistance levels (23.6%, 38.2%, 61.8%)<br>辨識潛在支撐/壓力位（23.6%、38.2%、61.8%）",
+  C: "Measure trading volume<br>測量成交量",
+  D: "Calculate option premiums<br>計算期權溢價",
+  Ans: "B"
+},
+{
+  QID: 35,
+  "Question(E)": "Why combine multiple indicators in a trading strategy?",
+  "Question(TC)": "為什麼要在交易策略中結合多個指標？",
+  A: "To increase false signals<br>增加假訊號",
+  B: "To confirm signals and reduce false positives (e.g., RSI + MACD)<br>確認訊號並減少誤判（如RSI+MACD）",
+  C: "To complicate decision-making<br>複雜化決策",
+  D: "To eliminate the need for price charts<br>免除價格圖表需求",
+  Ans: "B"
+},
+{
+  QID: 36,
+  "Question(E)": "What is Pine Script primarily designed for on TradingView?",
+  "Question(TC)": "Pine Script 主要設計用途是什麼？",
+  A: "Web development<br>網頁開發",
+  B: "Data encryption<br>資料加密",
+  C: "Video editing<br>視頻剪輯",
+  D: "Creating custom indicators and trading strategies<br>創建自訂指標與交易策略",
+  Ans: "D"
+},
+{
+  QID: 37,
+  "Question(E)": "How do you declare the version of Pine Script being used?",
+  "Question(TC)": "如何宣告Pine Script的版本？",
+  A: "//version=1",
+  B: "//@version=5",
+  C: "#version 5",
+  D: "#version 5",
+  Ans: "B"
+},
+
+{
+  QID: 38,
+  "Question(E)": "What is the difference between an indicator and a strategy in Pine Script?",
+  "Question(TC)": "Pine Script中，指標與策略的差異是？",
+  A: "Indicators can place trades, strategies cannot<br>指標可下單，策略不可",
+  B: "Indicators run faster<br>指標運算較快",
+  C: "Strategies can place trades and backtest, indicators only display information<br>策略可下單與回測，指標僅顯示資訊",
+  D: "Strategies cannot use user inputs<br>策略不可用用戶輸入",
+  Ans: "C"
+},
+{
+  QID: 39,
+  "Question(E)": "What happens if you do not declare the version at the top of your Pine Script?",
+  "Question(TC)": "若未在Pine Script頂部宣告版本，會發生什麼？",
+  A: "The script may not compile or run as expected<br>腳本可能無法正確編譯或執行",
+  B: "The script will default to version 1<br>預設為版本1",
+  C: "The script will run faster<br>腳本會運行更快",
+  D: "Nothing changes<br>無任何變化",
+  Ans: "A"
+},
+{
+  QID: 40,
+  "Question(E)": "What is a key benefit of using Pine Script on TradingView for technical analysis?",
+  "Question(TC)": "Pine Script用於TradingView技術分析的主要好處是？",
+  A: "It allows real-time creation, testing, and refinement of custom indicators and strategies<br>可即時創建、測試和優化自訂指標與策略",
+  B: "It can automate trades on all broker platforms<br>可自動化所有券商交易",
+  C: " It is only for backtesting<br>僅用於回測",
+  D: " It replaces all other programming languages<br>可取代其他所有程式語言",
+  Ans: "A"
+},
+  {
+    "QID": 41,
+    "Question(E)": "What is Pine Script primarily used for in TradingView?",
+    "Question(TC)": "Pine Script 在 TradingView 中主要用於什麼？",
+    A: "Executing trades directly on exchanges<br>直接在交易所執行交易",
+    B: "Creating custom indicators and generating alerts<br>創建自訂指標並生成警報",
+    C: "Optimizing trading strategies with Python<br>用 Python 優化交易策略",
+    D: "Managing portfolio risk<br>管理投資組合風險",
+    "Ans": "B"
+  },
+  {
+    "QID": 42,
+    "Question(E)": "What does backtesting primarily help traders to achieve?",
+    "Question(TC)": "回測主要幫助交易者達成什麼？",
+    A: "Predict future market movements with certainty<br>確定預測未來市場走勢",
+    B: "Evaluate the historical performance of a trading strategy<br>評估交易策略在歷史上的表現",
+    C: "Generate real-time alerts for trading signals<br>產生即時交易訊號",
+    D: "Reduce transaction costs<br>降低交易成本",
+    Ans: "B"
+  },
+  {
+    "QID": 43,
+    "Question(E)": "What is the key advantage of using tick-level data over OHLC data?",
+    "Question(TC)": "使用逐筆資料（tick-level data）相較於 OHLC 資料的主要優勢是什麼？",
+    A: "Reduced storage requirements<br>降低儲存需求",
+    B: "Capturing microstructure dynamics<br>捕捉市場微觀結構動態",
+    C: "Simpler processing<br>處理更簡單",
+    D: "Lower latency<br>更低延遲",
+    Ans: "B"
+  },
+  {
+    "QID": 44,
+    "Question(E)": "Which metric best measures strategy risk from peak losses?",
+    "Question(TC)": "哪一項指標最能衡量策略的高峰損失風險？",
+    A: "Profit factor<br>獲利因子",
+    B: "Sortino Ratio<br>Sortino 比率",
+    C: "Maximum drawdown<br>最大回撤",
+    D: "Annualized return<br>年化報酬率",
+    Ans: "C"
+  },
+  {
+    "QID": 45,
+    "Question(E)": "What is the primary risk of overfitting during backtesting?",
+    "Question(TC)": "回測過度擬合的主要風險是什麼？",
+    A: "Reduced computational load<br>降低運算負擔",
+    B: "False strategy performance<br>錯誤的策略表現",
+    C: "Loss of diversification<br>失去多樣化",
+    D: "Ignoring market conditions<br>忽視市場狀況",
+    Ans: "B"
+  },
+  {
+    "QID": 46,
+    "Question(E)": "Which factor most affects cryptocurrency strategy design?",
+    "Question(TC)": "哪個因素最影響加密貨幣策略設計？",
+    A: "Dividend yields<br>股息殖利率",
+    B: "24/7 market operations<br>24 小時全年無休的市場運作",
+    C: "Low volatility<br>低波動性",
+    D: "Central bank policies<br>中央銀行政策",
+    Ans: "B"
+  },
+  {
+    "QID": 47,
+    "Question(E)": "Which preprocessing step addresses 'look-ahead bias' in backtesting?",
+    "Question(TC)": "下列哪個前處理步驟可解決回測中的「前視偏差」？",
+    A: "Feature scaling<br>特徵縮放",
+    B: "Point-in-time data alignment<br>資料點對點對齊",
+    C: "One-hot encoding<br>One-hot 編碼",
+    D: "Volume normalization<br>成交量正規化",
+    Ans: "B"
+  },
+  {
+    "QID": 48,
+    "Question(E)": "What is the main purpose of a stop loss order in trading?",
+    "Question(TC)": "交易中止損單的主要目的是什麼？",
+    A: "NONE",
+    B: "To limit potential losses by closing a position automatically<br>限制潛在損失，自動平倉",
+    C: "To increase position size<br>增加持倉規模",
+    D: "To increase position size<br>增加持倉規模",
+    Ans: "B"
+  },
+  {
+    "QID": 49,
+    "Question(E)": "Why is historical financial data essential in algorithmic trading?",
+    "Question(TC)": "為什麼歷史金融數據對於演算法交易至關重要？",
+    A: "To guarantee profit<br>保證獲利",
+    B: "It helps identify patterns and test strategies before live trading<br>有助於發現模式並在實盤前測試策略",
+    C: "It replaces the need for risk management<br>取代風險管理需求",
+    D: "It is required by regulators<br>法規要求",
+    Ans: "B"
+  },
+  {
+    "QID": 50,
+    "Question(E)": "What is the main risk of using inaccurate or poor-quality financial data in algo trading?",
+    "Question(TC)": "使用不準確或品質不佳的金融數據進行演算法交易的主要風險是什麼？",
+    A: "Incorrect trading signals and poor strategy performance<br>產生錯誤的交易訊號與策略表現不佳",
+    B: "Increased trading speed<br>提高交易速度",
+    C: "Reduced transaction costs<br>降低交易成本",
+    D: "Higher liquidity<br>提高流動性",
+    Ans: "A"
+  },
+
+  {
+    "QID": 51,
+    "Question(E)": "Which of the following is a common source of market data for algorithmic trading?",
+    "Question(TC)": "下列哪一項是演算法交易常見的市場數據來源？",
+    A: "Printed newspapers<br>印刷報紙",
+    B: "Social media posts<br>社群媒體貼文",
+    C: "Exchange feeds<br>交易所數據",
+    D: "Weather reports<br>天氣報告",
+    Ans: "C"
+  },
+
+  {
+    "QID": 52,
+    "Question(E)": "Why is data cleaning crucial before running an algorithmic trading model?",
+    "Question(TC)": "為什麼在執行演算法交易模型前要進行資料清理？",
+    A: "It slows down the model<br>會讓模型變慢",
+    B: "It ensures the data is accurate and free from errors or outliers<br>確保資料準確且無錯誤或異常值",
+    C: " It increases model complexity<br>增加模型複雜度",
+    D: "It is only needed for manual trading<br>只對手動交易有用",
+    Ans: "B"
+  },
+{
+    "QID": 53,
+    "Question(E)": "Which type of data is most useful for macroeconomic analysis in trading algorithms?",
+    "Question(TC)": "哪一類的資料對於交易演算法中的總體經濟分析最有用？",
+    A: "Economic indicators (e.g., GDP, inflation)<br>經濟指標（如 GDP、通脹）",
+    B: "Company press releases<br>公司新聞稿",
+    C: "Sports statistics<br>運動統計數據",
+    D: "Weather forecasts<br>天氣預報",
+    Ans: "A"
+  },
+  {
+    "QID": 54,
+    "Question(E)": "What is a lookback period in time series analysis and calculate indicators?",
+    "Question(TC)": "在時間序列分析與指標計算中，什麼是「回顧期」？",
+    A: "The historical window of data used to calculate indicators or signals<br>用於計算指標或訊號的歷史數據窗口",
+    B: "The time between trades<br>兩次交易間的時間",
+    C: "The time until order expiration<br>訂單到期時間",
+    D: "The number of trades placed in a day<br>每天下單次數",
+    Ans: "A"
+  },
+  {
+    "QID": 55,
+    "Question(E)": "Which programming language is most commonly used for financial data analysis and algorithmic trading?",
+    "Question(TC)": "哪種程式語言最常用於財務數據分析與演算法交易？",
+    A: "Python",
+    B: "HTML",
+    C: "PHP",
+    D: "Swift",
+    Ans: "A"
+  },
+  {
+    "QID": 56,
+    "Question(E)": "What is the role of data visualization in financial analysis?",
+    "Question(TC)": "資料視覺化在金融分析中的作用是什麼？",
+    A: "To make data harder to interpret<br>讓資料更難解讀",
+    B: "To help identify trends and patterns visually<br>幫助直觀識別趨勢與模式",
+    C: "To encrypt trading signals<br>加密交易訊號",
+    D: "To slow down decision-making<br>放慢決策速度",
+    Ans: "B"
+  },
+  {
+    "QID": 57,
+    "Question(E)": "Which of the following is a key step in the signal generation process for algo trading?",
+    "Question(TC)": "下列哪一項是演算法交易訊號生成流程的關鍵步驟？",
+    A: "Random selection<br>隨機選擇",
+    B: "Applying mathematical models to process data to identify trade opportunities<br>對原始數據應用數學模型以發掘交易機會",
+    C: "Ignoring historical data<br>忽略歷史數據",
+    D: "Manual trade entry<br>手動下單",
+    Ans: "B"
+  },
+  {
+    "QID": 58,
+    "Question(E)": "Why is real-time data important for high-frequency trading algorithms?",
+    "Question(TC)": "為什麼即時數據對高頻交易演算法很重要？",
+    A: "It increases manual intervention<br>增加人工干預",
+    B: "It reduces the need for historical data<br>降低對歷史數據需求",
+    C: "It allows algorithms to react instantly to market changes<br>讓演算法能即時反應市場變化",
+    D: "It is only for backtesting<br>只用於回測",
+    Ans: "C"
+  },
+  {
+    "QID": 59,
+    "Question(E)": "What is the main benefit of using machine learning in financial data analysis?",
+    "Question(TC)": "機器學習在金融數據分析中的主要好處是什麼？",
+    A: "It guarantees profits<br>保證獲利",
+    B: " It can detect complex patterns and relationships in large datasets<br>能在大量資料中發現複雜模式與關聯",
+    C: "It replaces all human traders<br>取代所有人類交易員",
+    D: "It eliminates the need for data<br>不需任何資料",
+    Ans: "B"
+  },
+  {
+    "QID": 60,
+    "Question(E)": "How does data preprocessing impact the performance of trading algorithms?",
+    "Question(TC)": "資料前處理如何影響交易演算法的績效？",
+    A: "It has no impact<br>沒有影響",
+    B: "It improves accuracy and reliability by ensuring clean, consistent input data<br>透過確保乾淨、一致的輸入資料提升準確性與可靠性",
+    C: "It decreases computational efficiency<br>降低運算效率",
+    D: "It is only relevant for visualizations<br>只與資料視覺化相關",
+    Ans: "B"
+  },
+  {
+    "QID": 61,
+    "Question(E)": "What does EA stand for in the context of MT5 algo trading?",
+    "Question(TC)": "在 MT5 演算法交易中，EA 代表什麼？",
+    A: "Execution Algorithm<br>執行演算法",
+    B: "Expert Advisor<br>智慧交易系統（Expert Advisor）",
+    C: "Equity Analysis<br>股票分析",
+    D: "Exchange Automation<br>交易自動化",
+    Ans: "B"
+  },
+  {
+    "QID": 62,
+    "Question(E)": "Which API is commonly used for automated trading with Interactive Brokers?",
+    "Question(TC)": "與 Interactive Brokers 進行自動交易常用哪個 API？",
+    A: "REST API",
+    B: "IB API",
+    C: "FIX Protocol API",
+    D: "MT5 API",
+    Ans: "B"
+  },
+  {
+    "QID": 63,
+    "Question(E)": "In Python-based backtesting, which library is often used for data manipulation?",
+    "Question(TC)": "在 Python 回測中，常用於資料處理的函式庫是？",
+    A: "NumPy",
+    B: "pandas",
+    C: "matplotlib",
+    D: "scikit-learn",
+    Ans: "B"
+  },
+  {
+    "QID": 64,
+    "Question(E)": "What is the purpose of stock screening in algorithmic trading?",
+    "Question(TC)": "股票篩選在演算法交易中的目的是什麼？",
+    A: "To identify stocks that meet specific criteria for potential trades<br>找出符合特定條件的潛在交易股票",
+    B: "To execute trades automatically based on price levels<br>根據價格自動下單",
+    C: "To calculate option Greeks for hedging strategies<br>計算期權希臘值",
+    D: "To analyze historical market data<br>分析歷史市場資料",
+    Ans: "A"
+  },
+  {
+    "QID": 65,
+    "Question(E)": "What is a key limitation of backtesting?",
+    "Question(TC)": "回測的主要限制是什麼？",
+    A: "Cannot predict future market regimes<br>無法預測未來市場狀態",
+    B: "Eliminates all trading risks<br>消除所有交易風險",
+    C: "Guarantees identical live results<br>保證實盤結果相同",
+    D: "Requires no historical data<br>不需要歷史數據",
+    Ans: "A"
+  },
+  {
+    "QID": 66,
+    "Question(E)": "Which metric measures peak-to-trough portfolio loss?",
+    "Question(TC)": "哪一指標衡量投資組合的高峰至谷底損失？",
+    A: "Sharpe Ratio<br>夏普比率",
+    B: "Maximum drawdown<br>最大回撤",
+    C: "Maximum drawdown<br>最大回撤",
+    D: "Win rate<br>勝率",
+    Ans: "B"
+  },
+  {
+    "QID": 67,
+    "Question(E)": "Curve-fitting occurs when a strategy is:",
+    "Question(TC)": "當策略發生曲線擬合時，代表什麼？",
+    A: "ailored too closely to historical data<br>過度貼合歷史資料，降低實盤穩健性",
+    B: "Tested on out-of-sample data<br>在樣本外數據測試",
+    C: "Ignoring transaction costs<br>忽略交易成本",
+    D: "Using low-frequency data<br>使用低頻數據",
+    Ans: "A"
+  },
+  {
+    "QID": 68,
+    "Question(E)": "Walk-forward analysis prevents:",
+    "Question(TC)": "步進式測試（walk-forward analysis）可防止什麼？",
+    A: "Data mining<br>資料探勘",
+    B: "Over-optimization<br>過度最佳化",
+    C: "Low latency<br>低延遲",
+    D: "High-frequency trading<br>高頻交易",
+    Ans: "B"
+  },
+  {
+    "QID": 69,
+    "Question(E)": "Why test strategies across multiple market regimes?",
+    "Question(TC)": "為什麼要在多種市場情境下測試策略？",
+    A: "To increase overfitting risk<br>增加過擬合風險",
+    B: "To ensure robustness<br>確保策略穩健性",
+    C: "To ignore volatility<br>忽略波動性",
+    D: "To reduce data needs<br>降低資料需求",
+    Ans: "B"
+  },
+  {
+    "QID": 70,
+    "Question(E)": "Forward testing (paper trading) validates:",
+    "Question(TC)": "前測（模擬交易）驗證什麼？",
+    A: "Historical data accuracy<br>歷史數據準確性",
+    B: "Real-time strategy performance<br>策略在即時市場的表現",
+    C: "Dividend yields<br>股息殖利率",
+    D: "Tax efficiency<br>節稅效率",
+    Ans: "B"
+  },
+ {
+    "QID": 71,
+    "Question(E)": "K-means clustering helps:",
+    "Question(TC)": "K-means 聚類可協助什麼？",
+    A: "Detect market regimes<br>識別市場狀態",
+    B: "Predict exact prices<br>預測精確價格",
+    C: "Execute orders<br>執行交易指令",
+    D: "Execute orders<br>執行訂單",
+    Ans: "A"
+  },
+  {
+    "QID": 72,
+    "Question(E)": "How does position sizing affect risk?",
+    "Question(TC)": "部位規模管理如何影響風險？",
+    A: "Ignores volatility<br>忽略波動性",
+    B: "Manages exposure per trade<br>控制每筆交易的曝險",
+    C: "Guarantees profits<br>保證獲利",
+    D: "Increases overfitting<br>增加過度擬合",
+    Ans: "B"
+  },
+{
+    "QID": 73,
+    "Question(E)": "What is the core principle of the Martingale strategy in trading?",
+    "Question(TC)": "馬丁格爾策略的核心原則是什麼？",
+    A: "Halving position size after each loss to minimize risk<br>每次虧損後減半部位",
+    B: "Doubling position size after each loss to recover losses with one win<br>每次虧損後加倍部位，贏一次即可回本",
+    C: "Maintaining fixed position sizes regardless of trade outcomes<br>固定部位，不論輸贏",
+    D: "Exiting all positions after two consecutive losses<br>連續兩天虧損後全部出場",
+    Ans: "B"
+  },
+  {
+    "QID": 74,
+    "Question(E)": "What is a critical risk of using the Martingale strategy in volatile markets?",
+    "Question(TC)": "在波動市場中使用馬丁格爾策略的關鍵風險是什麼？",
+    A: "Reduced transaction costs<br>降低交易成本",
+    B: "Guaranteed long-term profitability<br>保證長期獲利",
+    C: "Exponential capital requirements during losing streaks<br>連續虧損時資金需求呈指數成長",
+    D: "Elimination of slippage<br>消除滑價",
+    Ans: "C"
+  },
+  {
+    "QID": 75,
+    "Question(E)": "What is the main purpose of using a stock filter or screener?",
+    "Question(TC)": "使用股票篩選器的主要目的為何？",
+    A: "To randomly select stocks<br>隨機選股",
+    B: "To narrow down investment candidates based on specific criteria<br>根據特定條件篩選投資標的",
+    C: "To increase trading frequency<br>增加交易頻率",
+    D: "To eliminate the need for analysis<br>免除分析需求",
+    Ans: "B"
+  },
+  {
+    "QID": 76,
+    "Question(E)": "How can technical analysts use stock filters?",
+    "Question(TC)": "技術分析師如何利用股票篩選器？",
+    A: "By screening for companies showing earnings growth<br>篩選盈餘成長公司",
+    B: "By filtering stocks trading above their 200-day moving average<br>篩選股價高於 200 日均線的股票",
+    C: "By analyzing management quality<br>分析管理層素質",
+    D: "By examining economic indicators<br>研究經濟指標",
+    Ans: "B"
+  },
+  {
+    "QID": 77,
+    "Question(E)": "What is an example of a fundamental filter?",
+    "Question(TC)": "下列哪一項為基本面篩選條件的例子？",
+    A: "Volume above 1 million shares<br>成交量超過 100 萬股",
+    B: "P/E ratio below 15<br>本益比低於 15",
+    C: "Price crossing above the 50-day moving average<br>股價穿越 50 日均線",
+    D: "RSI below 30<br>RSI 低於 30",
+    Ans: "B"
+  },
+  {
+    "QID": 78,
+    "Question(E)": "Which of the following is NOT a typical criterion for filtering stocks?",
+    "Question(TC)": "下列哪一項不是篩選股票的典型標準？",
+    A: "Company logo<br>公司標誌",
+    B: "Market capitalization<br>市值",
+    C: "Dividend yield<br>股息殖利率",
+    D: "Return on equity<br>股東權益報酬率",
+    Ans: "A"
+  },
+  {
+    "QID": 79,
+    "Question(E)": "What is a limitation of stock filtering and screening?",
+    "Question(TC)": "股票篩選的限制是什麼？",
+    A: "It always produces the best-performing stocks<br>一定能篩出最佳效股票",
+    B: "It is only used by technical analysts<br>僅技術分析師使用",
+    C: " It requires no input from investors<br>不需投資人參與",
+    D: "It may concentrate results in certain sectors and can be affected by biases<br>結果可能集中於特定產業且受偏誤影響",
+    Ans: "D"
+  },
+{
+    "QID": 80,
+    "Question(E)": "What is the primary purpose of the MetaTrader5 Python package?",
+    "Question(TC)": "MetaTrader5 Python 套件的主要用途是什麼？",
+    A: "To backtest trading strategies using historical data<br>用歷史數據回測交易策略",
+    B: "To create custom indicators for TradingView<br>為 TradingView 創建自訂指標",
+    C: "To interact with MT5 for tasks like retrieving market data and placing trades<br>用來與 MT5 互動，如獲取市場資料與下單",
+    D: "To optimize options strategies using Greeks<br>用來優化選擇權策略，使用希臘值",
+    Ans: "C"
+  },
+  {
+    "QID": 81,
+    "Question(E)": "Which Greek measures an option's sensitivity to changes in volatility?",
+    "Question(TC)": "哪個希臘值衡量期權對波動性變化的敏感度？",
+    A: "Delta",
+    B: "Theta",
+    C: "Vega",
+    D: "Gamma",
+    Ans: "C"
+  },
+  {
+    "QID": 82,
+    "Question(E)": "What is the primary goal of position sizing in algorithmic trading?",
+    "Question(TC)": "演算法交易中部位規模管理的主要目的是什麼？",
+    A: "Maximizing trade frequency<br>最大化交易頻率",
+    B: "Managing risk exposure per trade to protect capital<br>控管每筆交易風險，保護資本",
+    C: "Eliminating all market volatility<br>消除所有市場波動",
+    D: "Guaranteeing daily profits<br>保證每日獲利",
+    Ans: "B"
+  },
+  {
+    "QID": 83,
+    "Question(E)": "How does the Martingale strategy increase risk during losing streaks?",
+    "Question(TC)": "馬丁格爾策略在連續虧損時如何增加風險？",
+    A: "By doubling position sizes to recover losses, demanding exponential capital<br>每次虧損後加倍部位，需大量資本",
+    B: "By halving position sizes after losses<br>每次虧損後減半部位",
+    C: "By freezing trading activity<br>凍結交易",
+    D: "By diversifying assets<br>資產分散",
+    Ans: "B"
+  },
+  {
+    "QID": 84,
+    "Question(E)": "Which technique dynamically adjusts stop-loss levels based on volatility?",
+    "Question(TC)": "哪種技術根據波動性動態調整止損點位？",
+    A: "Trailing stop tied to Average True Range (ATR)<br>與平均真實區間（ATR）掛勾的追蹤止損",
+    B: "Fixed stop-loss<br>固定止損",
+    C: "Time-based exit<br>時間到期平倉",
+    D: "Profit-target-only orders<br>僅設定目標價格的訂單",
+    Ans: "A"
+  },
+  {
+    "QID": 85,
+    "Question(E)": "How does hedging enhance money management?",
+    "Question(TC)": "對沖如何提升資金管理？",
+    A: "By increasing directional market exposure<br>增加市場曝險",
+    B: "By eliminating all transaction costs<br>消除所有交易成本",
+    C: "By offsetting losses in one position with gains in a correlated asset<br>用相關資產的獲利抵消損失",
+    D: "By avoiding backtesting<br>避免回測",
+    Ans: "C"
+  },
+  {
+    "QID": 86,
+    "Question(E)": "What causes overfitting in strategy optimization?",
+    "Question(TC)": "策略最佳化中，過度擬合的原因為何？",
+    A: "Testing on out-of-sample data<br>在樣本外數據測試",
+    B: "Tailoring parameters too closely to historical data, reducing real-world robustness<br>參數過度貼合歷史資料，降低實盤穩健性",
+    C: "Using Monte Carlo simulations<br>使用蒙地卡羅模擬",
+    D: "Ignoring transaction costs<br>忽略交易成本",
+    Ans: "B"
+  },
+  {
+    "QID": 87,
+    "Question(E)": "What is a key risk of high leverage in money management?",
+    "Question(TC)": "高槓桿在資金管理中的關鍵風險是什麼？",
+    A: "Reduced capital requirements<br>降低資本需求",
+    B: "Amplified losses during volatile events<br>在市場波動事件中擴大虧損",
+    C: "Guaranteed annual returns<br>保證年報酬",
+    D: "Lower slippage<br>降低滑價",
+    Ans: "B"
+  },
+  {
+    "QID": 88,
+    "Question(E)": "How are Greeks used in options risk management?",
+    "Question(TC)": "希臘值如何用於期權風險管理？",
+    A: "To ignore volatility<br>忽略波動性",
+    B: "To hedge exposures (e.g., Delta-neutral strategies)<br>對沖曝險（如 Delta 中性策略）",
+    C: "To minimize transaction costs<br>降低交易成本",
+    D: "To reduce expected returns<br>降低預期回報",
+    Ans: "B"
+  },
+  {
+    "QID": 89,
+    "Question(E)": "How does hedging enhance money management?",
+    "Question(TC)": "對沖如何提升資金管理？",
+    A: "By increasing directional market exposure<br>增加市場曝險",
+    B: "By offsetting losses in one position with gains in a correlated asset<br>用相關資產的獲利抵消損失",
+    C: "By eliminating all transaction costs<br>消除所有交易成本",
+    D: "By avoiding backtesting<br>避免回測",
+    Ans: "B"
+  },
+  {
+    "QID": 90,
+    "Question(E)": "If an investor short (writes) a put option, what is their primary obligation?",
+    "Question(TC)": "若投資人賣出（寫出）賣權，主要義務為何？",
+    A: "To buy the underlying asset at the strike price if the buyer exercises<br>若買方執行，需以履約價買進標的資產",
+    B: "To sell the underlying asset at the strike price<br>以履約價賣出標的資產",
+    C: "To pay the premium to the buyer<br>向買方支付權利金",
+    D: "To hold the underlying asset until expiration<br>持有標的資產至到期",
+    Ans: "A"
+  },
+
+  {
+    "QID": 91,
+    "Question(E)": "An investor buys a put option with a strike price of $100 for a premium of $5. If the market price at expiration is $85, what is their profit per share?",
+    "Question(TC)": "投資人以 5 美元權利金買入履約價 100 美元的賣權，到期時市價為 85 美元，每股獲利為多少？",
+    A: "$10",
+    B: "$15",
+    C: "$20",
+    D: "$5",
+    Ans: "A"
+  },
+  {
+    "QID": 92,
+    "Question(E)": "Why might a simple \"buy low, sell high\" bot fail in live markets?",
+    "Question(TC)": "為什麼簡單的「低買高賣」機器人在實盤市場可能失敗？",
+    A: "Ignores transaction costs and trend volatility<br>忽略交易成本與趨勢波動",
+    B: "Uses advanced machine learning<br>使用進階機器學習",
+    C: "Relies on hourly data<br>依賴小時資料",
+    D: "Requires no API integration<br>不需 API 整合",
+    Ans: "A"
+  },
+  {
+    "QID": 93,
+    "Question(E)": "What is a critical first step when building a Python trading bot?",
+    "Question(TC)": "建立 Python 交易機器人的關鍵第一步是什麼？",
+    A: "Deploying to live markets immediately<br>立即部署至實盤",
+    B: "Backtesting strategies on historical data<br>用歷史數據回測策略",
+    C: "Skipping risk management<br>略過風險管理",
+    D: "Using unverified APIs<br>使用未驗證 API",
+    Ans: "B"
+  },
+  {
+    "QID": 94,
+    "Question(E)": "What is a key limitation of using CSV files for backtesting?",
+    "Question(TC)": "使用 CSV 檔案回測的主要限制是什麼？",
+    A: "Ignores real-time market dynamics like slippage<br>忽略滑價等即時市場動態",
+    B: "Guarantees live trading accuracy<br>保證實盤精準",
+    C: "Simplifies machine learning<br>簡化機器學習",
+    D: "Reduces data storage needs<br>降低資料儲存需求",
+    Ans: "A"
+  },
+  {
+    "QID": 95,
+    "Question(E)": "Which Python library is essential for handling financial time-series data?",
+    "Question(TC)": "哪個 Python 函式庫對於處理金融時間序列資料至關重要？",
+    A: "TensorFlow",
+    B: "PyGame",
+    C: "Pandas",
+    D: "Django",
+    Ans: "C"
+  },
+  {
+    "QID": 96,
+    "Question(E)": "Which Pine Script function is used to create a custom strategy?",
+    "Question(TC)": "哪個 Pine Script 函數可用於建立自訂策略？",
+    A: "trade()",
+    B: "customStrategy()",
+    C: "strategy()",
+    D: "indicator()",
+    Ans: "C"
+  }
+];
+
+
+ let examQuestions = [];
+    let currentIndex = 0;
+    let answered = false;
+
+    function startExam() {
+      examQuestions = [...questions].sort(() => Math.random() - 0.5);
+      currentIndex = 0;
+      document.getElementById('examSection').classList.add('hidden');
+      document.getElementById('questionSection').classList.remove('hidden');
+      showQuestion();
+      document.getElementById('nextBtn').style.display = 'none';
+      document.getElementById('restartBtn').style.display = 'inline-block';
+      document.getElementById('feedback').innerHTML = '';
+    }
+
+    function showQuestion() {
+      answered = false;
+      const q = examQuestions[currentIndex];
+      document.getElementById('qNum').textContent = `第 ${currentIndex + 1} / ${examQuestions.length} 題`;
+      document.getElementById('questionText').innerHTML =
+        `<div class="question-en">Q${q.QID} (EN): ${q["Question(E)"]}</div>` +
+        `<div class="question-tc">(中文): ${q["Question(TC)"]}</div>`;
+      const choicesDiv = document.getElementById('choices');
+      choicesDiv.innerHTML = '';
+      ['A', 'B', 'C', 'D'].forEach(opt => {
+        if (q[opt] !== undefined && q[opt] !== "") {
+          const btn = document.createElement('button');
+          btn.className = 'choice';
+          btn.innerHTML = `<b>${opt}.</b> ${q[opt].replace(/<br>/g, '')}`;
+          btn.onclick = () => selectAnswer(opt, btn);
+          choicesDiv.appendChild(btn);
+        }
+      });
+      document.getElementById('feedback').innerHTML = '';
+      document.getElementById('nextBtn').style.display = 'none';
+    }
+
+    function selectAnswer(opt, btn) {
+      if (answered) return;
+      answered = true;
+      const q = examQuestions[currentIndex];
+      const correct = q.Ans.trim().toUpperCase();
+      const choices = document.querySelectorAll('.choice');
+      choices.forEach(choiceBtn => choiceBtn.disabled = true);
+      if (opt === correct) {
+        btn.classList.add('correct');
+        document.getElementById('feedback').innerHTML = `<span class="answer correct">答對！</span>`;
+      } else {
+        btn.classList.add('incorrect');
+        choices.forEach(choiceBtn => {
+          if (choiceBtn.textContent.startsWith(correct + '.')) choiceBtn.classList.add('correct');
+        });
+        document.getElementById('feedback').innerHTML =
+          `<span class="answer incorrect">答錯！</span> <span class="answer correct">正確答案：${correct}</span>`;
+      }
+      if (currentIndex < examQuestions.length - 1) {
+        document.getElementById('nextBtn').style.display = 'inline-block';
+      } else {
+        document.getElementById('nextBtn').style.display = 'none';
+      }
+    }
+
+    function nextQuestion() {
+      if (currentIndex < examQuestions.length - 1) {
+        currentIndex++;
+        showQuestion();
+	answered = false;
+      }
+    }
+
+    function restartExam() {
+      document.getElementById('questionSection').classList.add('hidden');
+      document.getElementById('examSection').classList.remove('hidden');
+      document.getElementById('feedback').innerHTML = '';
+      document.getElementById('nextBtn').style.display = 'none';
+      document.getElementById('restartBtn').style.display = 'none';
+    }
+
+    function searchQuestions() {
+      const kw = document.getElementById('searchInput').value.trim().toLowerCase();
+      const resultDiv = document.getElementById('searchResults');
+      if (!kw) {
+        resultDiv.innerHTML = "";
+        return;
+      }
+      let html = '';
+      let count = 0;
+      questions.forEach(q => {
+        if (q["Question(E)"].toLowerCase().includes(kw)) {
+          count++;
+          html += `<div class="search-result">
+            <b>Q${q.QID} (EN):</b> ${q["Question(E)"]}<br>
+            <b>(中文):</b> ${q["Question(TC)"]}<br>
+            <b>正確答案：</b> <span class="answer">
+ 		 ${q.Ans}${q[q.Ans] ? '. ' + q[q.Ans].replace(/<br>/g, '') : ''}
+		</span>
+          </div>`;
+        }
+      });
+      if (!html) html = `<div style="color:#888;">找不到相關題目。</div>`;
+      resultDiv.innerHTML = html;
+    }
+  </script>
+</body>
+</html>
