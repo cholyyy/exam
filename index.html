@@ -204,15 +204,16 @@
       <div id="questionText"></div>
       <div class="choices" id="choices"></div>
       <div id="feedback"></div>
-<button class="btn" onclick="restartExam()" id="restartBtn">重新開始</button>
       <button class="btn" onclick="nextQuestion()" id="nextBtn">下一題</button>
+<button class="btn" onclick="restartExam()" id="restartBtn">重新開始</button>
+
 
       
    </div>
   </div>
 
 <script>
-// 題庫資料（請補齊完整96題，欄位名稱統一）
+
 const questions = [
   {
     QID: 1,
@@ -320,10 +321,10 @@ const questions = [
   QID: 11,
   "Question(E)": "If a trader makes 100 trades and 60 of them are profitable, what is the win rate?",
   "Question(TC)": "如果一位交易者進行了100筆交易，其中60筆是獲利的，勝率是多少？",
-  A: "0.4",
-  B: "0.5",
-  C: "0.6",
-  D: "0.7",
+  A: "40%",
+  B: "50%",
+  C: "60%",
+  D: "70%",
   Ans: "C"
 },
 {
@@ -444,7 +445,7 @@ const questions = [
   B: "R",
   C: "Python",
   D: "C#",
-  Ans: "C"
+  Ans: "B"
 },
 {
   QID: 24,
@@ -599,8 +600,8 @@ const questions = [
 },
 {
   QID: 39,
-  "Question(E)": "Which Pine Script function is used to plot a line on the chart?",
-  "Question(TC)": "Pine Script中用於在圖表上繪製線條的函數是？",
+  "Question(E)": "What happens if you do not declare the version at the top of your Pine Script?",
+  "Question(TC)": "若未在Pine Script頂部宣告版本，會發生什麼？",
   A: "The script may not compile or run as expected<br>腳本可能無法正確編譯或執行",
   B: "The script will default to version 1<br>預設為版本1",
   C: "The script will run faster<br>腳本會運行更快",
@@ -609,574 +610,576 @@ const questions = [
 },
 {
   QID: 40,
-  "Question(E)": "Which statement best describes a backtest in trading?",
-  "Question(TC)": "下列哪一項最能描述交易中的回測？",
-  A: "Testing a strategy on historical data to evaluate its performance<br>用歷史數據測試策略以評估其表現",
-  B: "Executing trades in a live market<br>在實盤市場執行交易",
-  C: "Paper trading with virtual money<br>用虛擬資金進行模擬交易",
-  D: "Reading financial news<br>閱讀財經新聞",
+  "Question(E)": "What is a key benefit of using Pine Script on TradingView for technical analysis?",
+  "Question(TC)": "Pine Script用於TradingView技術分析的主要好處是？",
+  A: "It allows real-time creation, testing, and refinement of custom indicators and strategies<br>可即時創建、測試和優化自訂指標與策略",
+  B: "It can automate trades on all broker platforms<br>可自動化所有券商交易",
+  C: " It is only for backtesting<br>僅用於回測",
+  D: " It replaces all other programming languages<br>可取代其他所有程式語言",
   Ans: "A"
 },
-{
-  QID: 41,
-  "Question(E)": "What is overfitting in trading strategy development?",
-  "Question(TC)": "交易策略開發中的過度擬合是什麼？",
-  A: "A strategy that works well on unseen data<br>策略在未見過的數據上表現良好",
-  B: "A strategy that only works well on the historical data it was trained on<br>策略僅在訓練時用過的歷史數據上表現良好",
-  C: "A strategy with low risk<br>低風險策略",
-  D: "A strategy with high win rate<br>高勝率策略",
-  Ans: "B"
-},
-{
-  QID: 42,
-  "Question(E)": "Which of the following is a sign of overfitting?",
-  "Question(TC)": "下列哪一項是過度擬合的徵兆？",
-  A: "High performance in backtest but poor results in live trading<br>回測表現佳但實盤表現差",
-  B: "Consistent results in both backtest and live trading<br>回測與實盤結果一致",
-  C: "Low drawdown in all environments<br>所有環境下低回撤",
-  D: "High Sharpe ratio in live trading<br>實盤高夏普比率",
-  Ans: "A"
-},
-{
-  QID: 43,
-  "Question(E)": "Which method helps avoid overfitting in trading strategies?",
-  "Question(TC)": "下列哪一方法有助於避免策略過度擬合？",
-  A: "Use more parameters<br>使用更多參數",
-  B: "Optimize on all available data<br>用所有數據優化",
-  C: "Use out-of-sample testing<br>使用樣本外測試",
-  D: "Ignore validation results<br>忽略驗證結果",
-  Ans: "C"
-},
-{
-  QID: 44,
-  "Question(E)": "What is a walk-forward analysis?",
-  "Question(TC)": "什麼是走前分析（walk-forward analysis）？",
-  A: "Testing a strategy on the same data repeatedly<br>在同一資料上反覆測試策略",
-  B: "Testing a strategy on new data after each optimization period<br>每次最佳化後用新數據測試策略",
-  C: "Testing only on out-of-sample data<br>僅用樣本外數據測試",
-  D: "Ignoring new data<br>忽略新數據",
-  Ans: "B"
-},
-{
-  QID: 45,
-  "Question(E)": "Which metric measures the largest peak-to-trough decline in equity?",
-  "Question(TC)": "哪一指標衡量資產從高點到低點的最大跌幅？",
-  A: "Sharpe Ratio",
-  B: "Win Rate",
-  C: "Maximum Drawdown",
-  D: "Profit Factor",
-  Ans: "C"
-},
-{
-  QID: 46,
-  "Question(E)": "What does a high maximum drawdown indicate?",
-  "Question(TC)": "高最大回撤代表什麼？",
-  A: "Low risk<br>低風險",
-  B: "High risk<br>高風險",
-  C: "High win rate<br>高勝率",
-  D: "Consistent returns<br>穩定報酬",
-  Ans: "B"
-},
-{
-  QID: 47,
-  "Question(E)": "Which metric evaluates the consistency of returns relative to risk?",
-  "Question(TC)": "哪一指標評估報酬的穩定性與風險的關係？",
-  A: "Sharpe Ratio",
-  B: "Drawdown",
-  C: "Z-score",
-  D: "Win Rate",
-  Ans: "A"
-},
-{
-  QID: 48,
-  "Question(E)": "What is a typical threshold for considering a Sharpe Ratio as good?",
-  "Question(TC)": "夏普比率通常多少以上被視為良好？",
-  A: "0.5",
-  B: "1.0",
-  C: "2.0",
-  D: "3.0",
-  Ans: "C"
-},
-{
-  QID: 49,
-  "Question(E)": "Which of the following is NOT a common trading order type?",
-  "Question(TC)": "下列哪一項不是常見的交易訂單類型？",
-  A: "Market Order<br>市價單",
-  B: "Limit Order<br>限價單",
-  C: "Stop Order<br>止損單",
-  D: "Future Order<br>期貨單",
-  Ans: "D"
-},
-{
-  QID: 50,
-  "Question(E)": "What is slippage in trading?",
-  "Question(TC)": "交易中的滑點是什麼？",
-  A: "The difference between expected and actual execution price<br>預期與實際成交價的差異",
-  B: "The commission paid to the broker<br>支付給券商的佣金",
-  C: "The spread between bid and ask<br>買賣價差",
-  D: "The minimum order size<br>最小下單量",
-  Ans: "A"
-},
-{
-  QID: 51,
-  "Question(E)": "Which factor increases the likelihood of slippage?",
-  "Question(TC)": "哪一因素會增加滑點發生的機率？",
-  A: "High market liquidity<br>高市場流動性",
-  B: "Low market volatility<br>低市場波動",
-  C: "Large order size<br>大單量",
-  D: "Trading during regular hours<br>正常交易時段",
-  Ans: "C"
-},
-{
-  QID: 52,
-  "Question(E)": "What is the spread in trading?",
-  "Question(TC)": "交易中的價差是什麼？",
-  A: "Difference between the highest bid and lowest ask<br>最高買價和最低賣價的差額",
-  B: "Difference between two moving averages<br>兩條移動平均線的差異",
-  C: "Difference between open and close price<br>開盤價與收盤價的差異",
-  D: "Difference between two markets<br>兩個市場的差異",
-  Ans: "A"
-},
-{
-  QID: 53,
-  "Question(E)": "Which of the following is a benefit of high liquidity?",
-  "Question(TC)": "高流動性有什麼好處？",
-  A: "Lower slippage<br>較低滑點",
-  B: "Higher spreads<br>較高價差",
-  C: "Slower execution<br>較慢成交",
-  D: "Higher volatility<br>較高波動",
-  Ans: "A"
-},
-{
-  QID: 54,
-  "Question(E)": "What is the main risk of trading illiquid assets?",
-  "Question(TC)": "交易流動性差的資產主要風險是什麼？",
-  A: "High slippage and difficulty exiting positions<br>滑點高且難以平倉",
-  B: "Low spreads<br>低價差",
-  C: "High leverage<br>高槓桿",
-  D: "Fast execution<br>快速成交",
-  Ans: "A"
-},
-{
-  QID: 55,
-  "Question(E)": "What is a stop-loss order designed to do?",
-  "Question(TC)": "止損單的設計目的是什麼？",
-  A: "Limit losses by closing a position at a specified price<br>在指定價格平倉以限制損失",
-  B: "Lock in profits<br>鎖定獲利",
-  C: "Increase leverage<br>提高槓桿",
-  D: "Open new positions<br>開新倉",
-  Ans: "A"
-},
-{
-  QID: 56,
-  "Question(E)": "What is a take-profit order?",
-  "Question(TC)": "什麼是止盈單？",
-  A: "An order to close a position at a target profit price<br>在目標價獲利平倉的訂單",
-  B: "An order to minimize losses<br>最小化損失的訂單",
-  C: "An order to increase position size<br>增加持倉的訂單",
-  D: "An order to open a new position<br>開新倉的訂單",
-  Ans: "A"
-},
-{
-  QID: 57,
-  "Question(E)": "Which of the following describes diversification?",
-  "Question(TC)": "下列哪一項描述了分散投資？",
-  A: "Investing in a variety of assets to reduce risk<br>投資多種資產以降低風險",
-  B: "Investing all capital in one asset<br>將所有資金投資於單一資產",
-  C: "Using high leverage<br>使用高槓桿",
-  D: "Short selling only<br>只做空",
-  Ans: "A"
-},
-{
-  QID: 58,
-  "Question(E)": "What is the main goal of risk management in trading?",
-  "Question(TC)": "交易中風險管理的主要目標是什麼？",
-  A: "Maximize returns with no risk<br>在無風險下最大化報酬",
-  B: "Eliminate all market risk<br>消除所有市場風險",
-  C: "Control and limit potential losses<br>控制並限制潛在損失",
-  D: "Trade as frequently as possible<br>盡可能頻繁交易",
-  Ans: "C"
-},
-{
-  QID: 59,
-  "Question(E)": "Which of the following is a risk management technique?",
-  "Question(TC)": "下列哪一項是風險管理技巧？",
-  A: "Position sizing<br>部位大小控制",
-  B: "Ignoring stop-losses<br>忽略止損",
-  C: "Trading without a plan<br>無計劃交易",
-  D: "All-in trading<br>全額投入",
-  Ans: "A"
-},
-{
-  QID: 60,
-  "Question(E)": "What is position sizing?",
-  "Question(TC)": "什麼是部位大小控制？",
-  A: "Determining how much to invest in each trade<br>決定每筆交易投入多少資金",
-  B: "Choosing which asset to trade<br>選擇交易標的",
-  C: "Setting stop-loss levels<br>設定止損價位",
-  D: "Timing market entries<br>選擇進場時機",
-  Ans: "A"
-},
-{
-  QID: 61,
-  "Question(E)": "Which of the following is NOT a benefit of backtesting?",
-  "Question(TC)": "下列哪一項不是回測的好處？",
-  A: "Assessing strategy performance<br>評估策略表現",
-  B: "Identifying potential weaknesses<br>找出潛在弱點",
-  C: "Guaranteeing future profits<br>保證未來獲利",
-  D: "Improving strategy design<br>改善策略設計",
-  Ans: "C"
-},
-{
-  QID: 62,
-  "Question(E)": "What is out-of-sample testing?",
-  "Question(TC)": "什麼是樣本外測試？",
-  A: "Testing on data not used during strategy development<br>在策略開發時未用過的數據上測試",
-  B: "Testing on the same data used for optimization<br>用優化時的數據測試",
-  C: "Testing in a demo account<br>在模擬帳戶測試",
-  D: "Testing with real money<br>用真實資金測試",
-  Ans: "A"
-},
-{
-  QID: 63,
-  "Question(E)": "What is curve fitting in trading?",
-  "Question(TC)": "什麼是交易中的曲線擬合？",
-  A: "Optimizing parameters to fit historical data too closely<br>過度調整參數以貼合歷史數據",
-  B: "Using only moving averages<br>只用移動平均線",
-  C: "Trading only one asset<br>只交易一種資產",
-  D: "Ignoring risk management<br>忽略風險管理",
-  Ans: "A"
-},
-{
-  QID: 64,
-  "Question(E)": "Which is a sign of curve fitting?",
-  "Question(TC)": "下列哪一項是曲線擬合的徵兆？",
-  A: "Excellent backtest results but poor live performance<br>回測極佳但實盤表現差",
-  B: "Consistent results in all environments<br>所有環境下結果一致",
-  C: "Low drawdown in live trading<br>實盤低回撤",
-  D: "High win rate in live trading<br>實盤高勝率",
-  Ans: "A"
-},
-{
-  QID: 65,
-  "Question(E)": "Which of the following is a benefit of paper trading?",
-  "Question(TC)": "模擬交易的好處是什麼？",
-  A: "Practice trading without financial risk<br>無財務風險下練習交易",
-  B: "Guaranteed profits<br>保證獲利",
-  C: "Higher leverage<br>高槓桿",
-  D: "No need for a trading plan<br>無需交易計畫",
-  Ans: "A"
-},
-{
-  QID: 66,
-  "Question(E)": "What is a limitation of paper trading?",
-  "Question(TC)": "模擬交易的限制是什麼？",
-  A: "Does not account for real market emotions and slippage<br>未考慮真實市場情緒及滑點",
-  B: "Involves real money<br>涉及真實資金",
-  C: "Cannot test strategies<br>無法測試策略",
-  D: "Requires a broker<br>需有券商",
-  Ans: "A"
-},
-{
-  QID: 67,
-  "Question(E)": "What is the main advantage of algorithmic trading?",
-  "Question(TC)": "演算法交易的主要優點是什麼？",
-  A: "Removes emotions from trading decisions<br>排除情緒影響",
-  B: "Requires no computer<br>不需電腦",
-  C: "Guarantees profits<br>保證獲利",
-  D: "Eliminates all risk<br>消除所有風險",
-  Ans: "A"
-},
-{
-  QID: 68,
-  "Question(E)": "Which of the following is a disadvantage of algorithmic trading?",
-  "Question(TC)": "演算法交易的缺點是什麼？",
-  A: "Requires programming knowledge<br>需要程式知識",
-  B: "No need for backtesting<br>無需回測",
-  C: "Removes discipline<br>消除紀律",
-  D: "Reduces efficiency<br>降低效率",
-  Ans: "A"
-},
-{
-  QID: 69,
-  "Question(E)": "What is latency in algorithmic trading?",
-  "Question(TC)": "演算法交易中的延遲是什麼？",
-  A: "The time delay between order submission and execution<br>下單到成交的時間延遲",
-  B: "The spread between bid and ask<br>買賣價差",
-  C: "The size of the order<br>訂單大小",
-  D: "The trading volume<br>交易量",
-  Ans: "A"
-},
-{
-  QID: 70,
-  "Question(E)": "Which type of trading strategy reacts to news events?",
-  "Question(TC)": "哪一種交易策略會對新聞事件做出反應？",
-  A: "Trend following<br>趨勢追蹤",
-  B: "Mean reversion<br>均值回歸",
-  C: "News-based trading<br>新聞交易",
-  D: "Arbitrage<br>套利",
-  Ans: "C"
-},
-{
-  QID: 71,
-  "Question(E)": "What is arbitrage in trading?",
-  "Question(TC)": "交易中的套利是什麼？",
-  A: "Taking advantage of price differences in different markets<br>利用不同市場的價格差",
-  B: "Following trends<br>追隨趨勢",
-  C: "Trading based on news<br>根據新聞交易",
-  D: "Holding positions long-term<br>長期持有",
-  Ans: "A"
-},
-{
-  QID: 72,
-  "Question(E)": "Which of the following is an example of high-frequency trading (HFT)?",
-  "Question(TC)": "下列哪一項是高頻交易的例子？",
-  A: "Placing thousands of trades per second<br>每秒下單數千次",
-  B: "Holding positions for months<br>持有部位數月",
-  C: "Trading based on fundamentals<br>根據基本面交易",
-  D: "Manual order entry<br>手動下單",
-  Ans: "A"
-},
-{
-  QID: 73,
-  "Question(E)": "Which programming language is commonly used for HFT systems?",
-  "Question(TC)": "高頻交易系統常用哪種程式語言？",
-  A: "Python",
-  B: "C++",
-  C: "JavaScript",
-  D: "PHP",
-  Ans: "B"
-},
-{
-  QID: 74,
-  "Question(E)": "What is latency arbitrage?",
-  "Question(TC)": "什麼是延遲套利？",
-  A: "Exploiting price differences due to speed advantages<br>利用速度優勢套利",
-  B: "Trading based on news<br>根據新聞交易",
-  C: "Holding positions for a long time<br>長期持有",
-  D: "Using only technical indicators<br>只用技術指標",
-  Ans: "A"
-},
-{
-  QID: 75,
-  "Question(E)": "Which of the following is a risk in HFT?",
-  "Question(TC)": "高頻交易的風險是什麼？",
-  A: "Technology failures<br>技術故障",
-  B: "Slow execution<br>慢成交",
-  C: "Low trading volume<br>低成交量",
-  D: "Manual errors<br>手動失誤",
-  Ans: "A"
-},
-{
-  QID: 76,
-  "Question(E)": "What is the main purpose of market making?",
-  "Question(TC)": "做市商的主要目的為何？",
-  A: "Provide liquidity to the market<br>為市場提供流動性",
-  B: "Manipulate prices<br>操縱價格",
-  C: "Eliminate spreads<br>消除價差",
-  D: "Trade only for profit<br>只為獲利交易",
-  Ans: "A"
-},
-{
-  QID: 77,
-  "Question(E)": "Which order type is used by market makers to provide liquidity?",
-  "Question(TC)": "做市商用哪種訂單提供流動性？",
-  A: "Limit orders<br>限價單",
-  B: "Market orders<br>市價單",
-  C: "Stop orders<br>止損單",
-  D: "Trailing stop orders<br>移動止損單",
-  Ans: "A"
-},
-{
-  QID: 78,
-  "Question(E)": "What is a dark pool in trading?",
-  "Question(TC)": "交易中的暗池是什麼？",
-  A: "A private exchange for large trades not visible to the public<br>不公開的大宗交易平台",
-  B: "A market with no liquidity<br>無流動性的市場",
-  C: "A type of stop order<br>一種止損單",
-  D: "A technical indicator<br>一種技術指標",
-  Ans: "A"
-},
-{
-  QID: 79,
-  "Question(E)": "Which of the following is a characteristic of dark pools?",
-  "Question(TC)": "下列哪一項是暗池的特徵？",
-  A: "Lack of pre-trade transparency<br>缺乏交易前透明度",
-  B: "High public visibility<br>高度公開",
-  C: "Small trade sizes<br>小額交易",
-  D: "Open to all investors<br>對所有投資人開放",
-  Ans: "A"
-},
-{
-  QID: 80,
-  "Question(E)": "What is the main advantage of trading in a dark pool?",
-  "Question(TC)": "在暗池交易的主要優點是什麼？",
-  A: "Reduced market impact for large trades<br>降低大額交易對市場的影響",
-  B: "Higher transparency<br>更高透明度",
-  C: "Faster execution<br>更快成交",
-  D: "Lower commissions<br>較低手續費",
-  Ans: "A"
-},
-{
-  QID: 81,
-  "Question(E)": "What is the main regulatory concern with dark pools?",
-  "Question(TC)": "監管機構對暗池的主要擔憂是什麼？",
-  A: "Lack of transparency<br>缺乏透明度",
-  B: "Too many small trades<br>交易量太小",
-  C: "High commissions<br>高手續費",
-  D: "Low latency<br>低延遲",
-  Ans: "A"
-},
-{
-  QID: 82,
-  "Question(E)": "Which of the following is NOT a benefit of algorithmic trading?",
-  "Question(TC)": "下列哪一項不是演算法交易的好處？",
-  A: "Faster order execution<br>更快下單",
-  B: "Emotion-free trading<br>無情緒交易",
-  C: "Guaranteed profits<br>保證獲利",
-  D: "Ability to backtest strategies<br>可回測策略",
-  Ans: "C"
-},
-{
-  QID: 83,
-  "Question(E)": "What is a flash crash?",
-  "Question(TC)": "什麼是閃電崩盤？",
-  A: "A rapid, deep, and volatile fall in security prices within a very short time<br>短時間內價格急劇下跌",
-  B: "A slow decline in market prices<br>市場價格緩慢下跌",
-  C: "A steady increase in prices<br>價格穩定上漲",
-  D: "A type of technical indicator<br>一種技術指標",
-  Ans: "A"
-},
-{
-  QID: 84,
-  "Question(E)": "Which factor can contribute to a flash crash?",
-  "Question(TC)": "下列哪一因素可能導致閃電崩盤？",
-  A: "Algorithmic trading errors<br>演算法交易錯誤",
-  B: "Consistent market liquidity<br>持續市場流動性",
-  C: "Gradual price changes<br>價格緩慢變動",
-  D: "Manual trading only<br>僅手動交易",
-  Ans: "A"
-},
-{
-  QID: 85,
-  "Question(E)": "What is the primary goal of quantitative trading?",
-  "Question(TC)": "量化交易的主要目標是什麼？",
-  A: "Use mathematical models to identify trading opportunities<br>用數學模型發現交易機會",
-  B: "Trade based on emotions<br>根據情緒交易",
-  C: "Rely on news only<br>只依賴新聞",
-  D: "Avoid all technology<br>避免所有科技",
-  Ans: "A"
-},
-{
-  QID: 86,
-  "Question(E)": "Which of the following is a common data source for quantitative trading?",
-  "Question(TC)": "量化交易常用哪種數據來源？",
-  A: "Historical price data<br>歷史價格數據",
-  B: "Personal opinions<br>個人意見",
-  C: "Rumors<br>謠言",
-  D: "Horoscopes<br>星座運勢",
-  Ans: "A"
-},
-{
-  QID: 87,
-  "Question(E)": "What is data mining in quantitative trading?",
-  "Question(TC)": "量化交易中的數據挖掘是什麼？",
-  A: "Extracting useful patterns from large datasets<br>從大量數據中提取有用模式",
-  B: "Ignoring all data<br>忽略所有數據",
-  C: "Trading only on news<br>只根據新聞交易",
-  D: "Manual chart drawing<br>手動畫圖",
-  Ans: "A"
-},
-{
-  QID: 88,
-  "Question(E)": "Which of the following is a risk of data mining?",
-  "Question(TC)": "數據挖掘的風險是什麼？",
-  A: "Overfitting to historical data<br>對歷史數據過度擬合",
-  B: "Finding robust strategies<br>找到穩健策略",
-  C: "Improved risk management<br>提升風險管理",
-  D: "Faster execution<br>更快執行",
-  Ans: "A"
-},
-{
-  QID: 89,
-  "Question(E)": "What is the purpose of feature engineering in quantitative trading?",
-  "Question(TC)": "量化交易中特徵工程的目的是什麼？",
-  A: "Create informative variables to improve model performance<br>創建有用變數以提升模型表現",
-  B: "Remove all variables<br>移除所有變數",
-  C: "Increase overfitting<br>增加過度擬合",
-  D: "Avoid using data<br>避免使用數據",
-  Ans: "A"
-},
-{
-  QID: 90,
-  "Question(E)": "Which machine learning model is commonly used for classification tasks in trading?",
-  "Question(TC)": "交易中常用哪種機器學習模型做分類？",
-  A: "Decision Tree<br>決策樹",
-  B: "K-Means<br>K均值",
-  C: "Linear Regression<br>線性回歸",
-  D: "ARIMA<br>自回歸移動平均",
-  Ans: "A"
-},
-{
-  QID: 91,
-  "Question(E)": "What is cross-validation in machine learning?",
-  "Question(TC)": "機器學習中的交叉驗證是什麼？",
-  A: "A method to evaluate model performance on different data subsets<br>用不同數據子集評估模型表現的方法",
-  B: "Training on all data at once<br>一次用所有數據訓練",
-  C: "Ignoring test data<br>忽略測試數據",
-  D: "Manual parameter tuning<br>手動調參",
-  Ans: "A"
-},
-{
-  QID: 92,
-  "Question(E)": "Which of the following is a benefit of cross-validation?",
-  "Question(TC)": "交叉驗證的好處是什麼？",
-  A: "Reduces overfitting risk<br>降低過度擬合風險",
-  B: "Increases model bias<br>增加模型偏差",
-  C: "Requires less data<br>需要更少數據",
-  D: "Always improves accuracy<br>一定提升準確率",
-  Ans: "A"
-},
-{
-  QID: 93,
-  "Question(E)": "What is a confusion matrix?",
-  "Question(TC)": "什麼是混淆矩陣？",
-  A: "A table to evaluate classification model performance<br>評估分類模型表現的表格",
-  B: "A technical indicator<br>技術指標",
-  C: "A type of trading order<br>交易訂單類型",
-  D: "A price chart<br>價格圖",
-  Ans: "A"
-},
-{
-  QID: 94,
-  "Question(E)": "Which metric measures the proportion of correct positive predictions?",
-  "Question(TC)": "哪一指標衡量正確預測正類的比例？",
-  A: "Precision<br>精確率",
-  B: "Recall<br>召回率",
-  C: "F1 Score<br>F1分數",
-  D: "Accuracy<br>準確率",
-  Ans: "A"
-},
-{
-  QID: 95,
-  "Question(E)": "What is the F1 Score in classification problems?",
-  "Question(TC)": "分類問題中的F1分數是什麼？",
-  A: "The harmonic mean of precision and recall<br>精確率與召回率的調和平均",
-  B: "The sum of precision and recall<br>精確率與召回率的總和",
-  C: "The difference between precision and recall<br>精確率與召回率的差",
-  D: "The product of precision and recall<br>精確率與召回率的乘積",
-  Ans: "A"
-},
+  {
+    "QID": 41,
+    "Question(E)": "What is Pine Script primarily used for in TradingView?",
+    "Question(TC)": "Pine Script 在 TradingView 中主要用於什麼？",
+    A: "Executing trades directly on exchanges<br>直接在交易所執行交易",
+    B: "Creating custom indicators and generating alerts<br>創建自訂指標並生成警報",
+    C: "Optimizing trading strategies with Python<br>用 Python 優化交易策略",
+    D: "Managing portfolio risk<br>管理投資組合風險",
+    "Ans": "B"
+  },
+  {
+    "QID": 42,
+    "Question(E)": "What does backtesting primarily help traders to achieve?",
+    "Question(TC)": "回測主要幫助交易者達成什麼？",
+    A: "Predict future market movements with certainty<br>確定預測未來市場走勢",
+    B: "Evaluate the historical performance of a trading strategy<br>評估交易策略在歷史上的表現",
+    C: "Generate real-time alerts for trading signals<br>產生即時交易訊號",
+    D: "Reduce transaction costs<br>降低交易成本",
+    Ans: "B"
+  },
+  {
+    "QID": 43,
+    "Question(E)": "What is the key advantage of using tick-level data over OHLC data?",
+    "Question(TC)": "使用逐筆資料（tick-level data）相較於 OHLC 資料的主要優勢是什麼？",
+    A: "Reduced storage requirements<br>降低儲存需求",
+    B: "Capturing microstructure dynamics<br>捕捉市場微觀結構動態",
+    C: "Simpler processing<br>處理更簡單",
+    D: "Lower latency<br>更低延遲",
+    Ans: "B"
+  },
+  {
+    "QID": 44,
+    "Question(E)": "Which metric best measures strategy risk from peak losses?",
+    "Question(TC)": "哪一項指標最能衡量策略的高峰損失風險？",
+    A: "Profit factor<br>獲利因子",
+    B: "Sortino Ratio<br>Sortino 比率",
+    C: "Maximum drawdown<br>最大回撤",
+    D: "Annualized return<br>年化報酬率",
+    Ans: "C"
+  },
+  {
+    "QID": 45,
+    "Question(E)": "What is the primary risk of overfitting during backtesting?",
+    "Question(TC)": "回測過度擬合的主要風險是什麼？",
+    A: "Reduced computational load<br>降低運算負擔",
+    B: "False strategy performance<br>錯誤的策略表現",
+    C: "Loss of diversification<br>失去多樣化",
+    D: "Ignoring market conditions<br>忽視市場狀況",
+    Ans: "B"
+  },
+  {
+    "QID": 46,
+    "Question(E)": "Which factor most affects cryptocurrency strategy design?",
+    "Question(TC)": "哪個因素最影響加密貨幣策略設計？",
+    A: "Dividend yields<br>股息殖利率",
+    B: "24/7 market operations<br>24 小時全年無休的市場運作",
+    C: "Low volatility<br>低波動性",
+    D: "Central bank policies<br>中央銀行政策",
+    Ans: "B"
+  },
+  {
+    "QID": 47,
+    "Question(E)": "Which preprocessing step addresses 'look-ahead bias' in backtesting?",
+    "Question(TC)": "下列哪個前處理步驟可解決回測中的「前視偏差」？",
+    A: "Feature scaling<br>特徵縮放",
+    B: "Point-in-time data alignment<br>資料點對點對齊",
+    C: "One-hot encoding<br>One-hot 編碼",
+    D: "Volume normalization<br>成交量正規化",
+    Ans: "B"
+  },
+  {
+    "QID": 48,
+    "Question(E)": "What is the main purpose of a stop loss order in trading?",
+    "Question(TC)": "交易中止損單的主要目的是什麼？",
+    A: "NONE",
+    B: "To limit potential losses by closing a position automatically<br>限制潛在損失，自動平倉",
+    C: "To increase position size<br>增加持倉規模",
+    D: "To increase position size<br>增加持倉規模",
+    Ans: "B"
+  },
+  {
+    "QID": 49,
+    "Question(E)": "Why is historical financial data essential in algorithmic trading?",
+    "Question(TC)": "為什麼歷史金融數據對於演算法交易至關重要？",
+    A: "To guarantee profit<br>保證獲利",
+    B: "It helps identify patterns and test strategies before live trading<br>有助於發現模式並在實盤前測試策略",
+    C: "It replaces the need for risk management<br>取代風險管理需求",
+    D: "It is required by regulators<br>法規要求",
+    Ans: "B"
+  },
+  {
+    "QID": 50,
+    "Question(E)": "What is the main risk of using inaccurate or poor-quality financial data in algo trading?",
+    "Question(TC)": "使用不準確或品質不佳的金融數據進行演算法交易的主要風險是什麼？",
+    A: "Incorrect trading signals and poor strategy performance<br>產生錯誤的交易訊號與策略表現不佳",
+    B: "Increased trading speed<br>提高交易速度",
+    C: "Reduced transaction costs<br>降低交易成本",
+    D: "Higher liquidity<br>提高流動性",
+    Ans: "A"
+  },
 
   {
-    QID: 96,
-    "Question(E)": "What is the main advantage of using arrays in Pine Script?",
-    "Question(TC)": "Pine Script中使用陣列的主要好處是？",
-    A: "Store and process multiple values efficiently<br>高效儲存與處理多個數值",
-    B: "Send alerts<br>發送警報",
-    C: "Plot indicators<br>繪製指標",
-    D: "Set script version<br>設定腳本版本",
+    "QID": 51,
+    "Question(E)": "Which of the following is a common source of market data for algorithmic trading?",
+    "Question(TC)": "下列哪一項是演算法交易常見的市場數據來源？",
+    A: "Printed newspapers<br>印刷報紙",
+    B: "Social media posts<br>社群媒體貼文",
+    C: "Exchange feeds<br>交易所數據",
+    D: "Weather reports<br>天氣報告",
+    Ans: "C"
+  },
+
+  {
+    "QID": 52,
+    "Question(E)": "Why is data cleaning crucial before running an algorithmic trading model?",
+    "Question(TC)": "為什麼在執行演算法交易模型前要進行資料清理？",
+    A: "It slows down the model<br>會讓模型變慢",
+    B: "It ensures the data is accurate and free from errors or outliers<br>確保資料準確且無錯誤或異常值",
+    C: " It increases model complexity<br>增加模型複雜度",
+    D: "It is only needed for manual trading<br>只對手動交易有用",
+    Ans: "B"
+  },
+{
+    "QID": 53,
+    "Question(E)": "Which type of data is most useful for macroeconomic analysis in trading algorithms?",
+    "Question(TC)": "哪一類的資料對於交易演算法中的總體經濟分析最有用？",
+    A: "Economic indicators (e.g., GDP, inflation)<br>經濟指標（如 GDP、通脹）",
+    B: "Company press releases<br>公司新聞稿",
+    C: "Sports statistics<br>運動統計數據",
+    D: "Weather forecasts<br>天氣預報",
     Ans: "A"
+  },
+  {
+    "QID": 54,
+    "Question(E)": "What is a lookback period in time series analysis and calculate indicators?",
+    "Question(TC)": "在時間序列分析與指標計算中，什麼是「回顧期」？",
+    A: "The historical window of data used to calculate indicators or signals<br>用於計算指標或訊號的歷史數據窗口",
+    B: "The time between trades<br>兩次交易間的時間",
+    C: "The time until order expiration<br>訂單到期時間",
+    D: "The number of trades placed in a day<br>每天下單次數",
+    Ans: "A"
+  },
+  {
+    "QID": 55,
+    "Question(E)": "Which programming language is most commonly used for financial data analysis and algorithmic trading?",
+    "Question(TC)": "哪種程式語言最常用於財務數據分析與演算法交易？",
+    A: "Python",
+    B: "HTML",
+    C: "PHP",
+    D: "Swift",
+    Ans: "A"
+  },
+  {
+    "QID": 56,
+    "Question(E)": "What is the role of data visualization in financial analysis?",
+    "Question(TC)": "資料視覺化在金融分析中的作用是什麼？",
+    A: "To make data harder to interpret<br>讓資料更難解讀",
+    B: "To help identify trends and patterns visually<br>幫助直觀識別趨勢與模式",
+    C: "To encrypt trading signals<br>加密交易訊號",
+    D: "To slow down decision-making<br>放慢決策速度",
+    Ans: "B"
+  },
+  {
+    "QID": 57,
+    "Question(E)": "Which of the following is a key step in the signal generation process for algo trading?",
+    "Question(TC)": "下列哪一項是演算法交易訊號生成流程的關鍵步驟？",
+    A: "Random selection<br>隨機選擇",
+    B: "Applying mathematical models to process data to identify trade opportunities<br>對原始數據應用數學模型以發掘交易機會",
+    C: "Ignoring historical data<br>忽略歷史數據",
+    D: "Manual trade entry<br>手動下單",
+    Ans: "B"
+  },
+  {
+    "QID": 58,
+    "Question(E)": "Why is real-time data important for high-frequency trading algorithms?",
+    "Question(TC)": "為什麼即時數據對高頻交易演算法很重要？",
+    A: "It increases manual intervention<br>增加人工干預",
+    B: "It reduces the need for historical data<br>降低對歷史數據需求",
+    C: "It allows algorithms to react instantly to market changes<br>讓演算法能即時反應市場變化",
+    D: "It is only for backtesting<br>只用於回測",
+    Ans: "C"
+  },
+  {
+    "QID": 59,
+    "Question(E)": "What is the main benefit of using machine learning in financial data analysis?",
+    "Question(TC)": "機器學習在金融數據分析中的主要好處是什麼？",
+    A: "It guarantees profits<br>保證獲利",
+    B: " It can detect complex patterns and relationships in large datasets<br>能在大量資料中發現複雜模式與關聯",
+    C: "It replaces all human traders<br>取代所有人類交易員",
+    D: "It eliminates the need for data<br>不需任何資料",
+    Ans: "B"
+  },
+  {
+    "QID": 60,
+    "Question(E)": "How does data preprocessing impact the performance of trading algorithms?",
+    "Question(TC)": "資料前處理如何影響交易演算法的績效？",
+    A: "It has no impact<br>沒有影響",
+    B: "It improves accuracy and reliability by ensuring clean, consistent input data<br>透過確保乾淨、一致的輸入資料提升準確性與可靠性",
+    C: "It decreases computational efficiency<br>降低運算效率",
+    D: "It is only relevant for visualizations<br>只與資料視覺化相關",
+    Ans: "B"
+  },
+  {
+    "QID": 61,
+    "Question(E)": "What does EA stand for in the context of MT5 algo trading?",
+    "Question(TC)": "在 MT5 演算法交易中，EA 代表什麼？",
+    A: "Execution Algorithm<br>執行演算法",
+    B: "Expert Advisor<br>智慧交易系統（Expert Advisor）",
+    C: "Equity Analysis<br>股票分析",
+    D: "Exchange Automation<br>交易自動化",
+    Ans: "B"
+  },
+  {
+    "QID": 62,
+    "Question(E)": "Which API is commonly used for automated trading with Interactive Brokers?",
+    "Question(TC)": "與 Interactive Brokers 進行自動交易常用哪個 API？",
+    A: "REST API",
+    B: "IB API",
+    C: "FIX Protocol API",
+    D: "MT5 API",
+    Ans: "B"
+  },
+  {
+    "QID": 63,
+    "Question(E)": "In Python-based backtesting, which library is often used for data manipulation?",
+    "Question(TC)": "在 Python 回測中，常用於資料處理的函式庫是？",
+    A: "NumPy",
+    B: "pandas",
+    C: "matplotlib",
+    D: "scikit-learn",
+    Ans: "B"
+  },
+  {
+    "QID": 64,
+    "Question(E)": "What is the purpose of stock screening in algorithmic trading?",
+    "Question(TC)": "股票篩選在演算法交易中的目的是什麼？",
+    A: "To identify stocks that meet specific criteria for potential trades<br>找出符合特定條件的潛在交易股票",
+    B: "To execute trades automatically based on price levels<br>根據價格自動下單",
+    C: "To calculate option Greeks for hedging strategies<br>計算期權希臘值",
+    D: "To analyze historical market data<br>分析歷史市場資料",
+    Ans: "A"
+  },
+  {
+    "QID": 65,
+    "Question(E)": "What is a key limitation of backtesting?",
+    "Question(TC)": "回測的主要限制是什麼？",
+    A: "Cannot predict future market conditions<br>無法預測未來市場狀態",
+    B: "Eliminates all trading risks<br>消除所有交易風險",
+    C: "Guarantees identical live results<br>保證實盤結果相同",
+    D: "Requires no historical data<br>不需要歷史數據",
+    Ans: "A"
+  },
+  {
+    "QID": 66,
+    "Question(E)": "Which metric measures peak-to-trough portfolio loss?",
+    "Question(TC)": "哪一指標衡量投資組合的高峰至谷底損失？",
+    A: "Sharpe Ratio<br>夏普比率",
+    B: "Maximum drawdown<br>最大回撤",
+    C: "Maximum drawdown<br>最大回撤",
+    D: "Win rate<br>勝率",
+    Ans: "B"
+  },
+  {
+    "QID": 67,
+    "Question(E)": "Curve-fitting occurs when a strategy is:",
+    "Question(TC)": "當策略發生曲線擬合時，代表什麼？",
+    A: "ailored too closely to historical data<br>過度貼合歷史資料，降低實盤穩健性",
+    B: "Tested on out-of-sample data<br>在樣本外數據測試",
+    C: "Ignoring transaction costs<br>忽略交易成本",
+    D: "Using low-frequency data<br>使用低頻數據",
+    Ans: "A"
+  },
+  {
+    "QID": 68,
+    "Question(E)": "Walk-forward analysis prevents:",
+    "Question(TC)": "步進式測試（walk-forward analysis）可防止什麼？",
+    A: "Data mining<br>資料探勘",
+    B: "Low latency<br>低延遲",
+    C: "High-frequency trading<br>高頻交易",
+    D: "Over-optimization<br>過度最佳化",
+    Ans: "A"
+  },
+  {
+    "QID": 69,
+    "Question(E)": "Why test strategies across multiple market regimes?",
+    "Question(TC)": "為什麼要在多種市場情境下測試策略？",
+    A: "To increase overfitting risk<br>增加過擬合風險",
+    B: "To ensure robustness<br>確保策略穩健性",
+    C: "To ignore volatility<br>忽略波動性",
+    D: "To reduce data needs<br>降低資料需求",
+    Ans: "B"
+  },
+  {
+    "QID": 70,
+    "Question(E)": "Forward testing (paper trading) validates:",
+    "Question(TC)": "前測（模擬交易）驗證什麼？",
+    A: "Historical data accuracy<br>歷史數據準確性",
+    B: "Real-time strategy performance<br>策略在即時市場的表現",
+    C: "Dividend yields<br>股息殖利率",
+    D: "Tax efficiency<br>節稅效率",
+    Ans: "B"
+  },
+ {
+    "QID": 71,
+    "Question(E)": "K-means clustering helps:",
+    "Question(TC)": "K-means 聚類可協助什麼？",
+    A: "Detect market regimes<br>識別市場狀態",
+    B: "Predict exact prices<br>預測精確價格",
+    C: "Execute orders<br>執行交易指令",
+    D: "Execute orders<br>執行訂單",
+    Ans: "A"
+  },
+  {
+    "QID": 72,
+    "Question(E)": "How does position sizing affect risk?",
+    "Question(TC)": "部位規模管理如何影響風險？",
+    A: "Ignores volatility<br>忽略波動性",
+    B: "Manages exposure per trade<br>控制每筆交易的曝險",
+    C: "Guarantees profits<br>保證獲利",
+    D: "Increases overfitting<br>增加過度擬合",
+    Ans: "B"
+  },
+{
+    "QID": 73,
+    "Question(E)": "What is the core principle of the Martingale strategy in trading?",
+    "Question(TC)": "馬丁格爾策略的核心原則是什麼？",
+    A: "Halving position size after each loss to minimize risk<br>每次虧損後減半部位",
+    B: "Doubling position size after each loss to recover losses with one win<br>每次虧損後加倍部位，贏一次即可回本",
+    C: "Maintaining fixed position sizes regardless of trade outcomes<br>固定部位，不論輸贏",
+    D: "Exiting all positions after two consecutive losses<br>連續兩天虧損後全部出場",
+    Ans: "B"
+  },
+  {
+    "QID": 74,
+    "Question(E)": "What is a critical risk of using the Martingale strategy in volatile markets?",
+    "Question(TC)": "在波動市場中使用馬丁格爾策略的關鍵風險是什麼？",
+    A: "Reduced transaction costs<br>降低交易成本",
+    B: "Guaranteed long-term profitability<br>保證長期獲利",
+    C: "Exponential capital requirements during losing streaks<br>連續虧損時資金需求呈指數成長",
+    D: "Elimination of slippage<br>消除滑價",
+    Ans: "C"
+  },
+  {
+    "QID": 75,
+    "Question(E)": "What is the main purpose of using a stock filter or screener?",
+    "Question(TC)": "使用股票篩選器的主要目的為何？",
+    A: "To randomly select stocks<br>隨機選股",
+    B: "To narrow down investment candidates based on specific criteria<br>根據特定條件篩選投資標的",
+    C: "To increase trading frequency<br>增加交易頻率",
+    D: "To eliminate the need for analysis<br>免除分析需求",
+    Ans: "B"
+  },
+  {
+    "QID": 76,
+    "Question(E)": "How can technical analysts use stock filters?",
+    "Question(TC)": "技術分析師如何利用股票篩選器？",
+    A: "By screening for companies showing earnings growth<br>篩選盈餘成長公司",
+    B: "By filtering stocks trading above their 200-day moving average<br>篩選股價高於 200 日均線的股票",
+    C: "By analyzing management quality<br>分析管理層素質",
+    D: "By examining economic indicators<br>研究經濟指標",
+    Ans: "B"
+  },
+  {
+    "QID": 77,
+    "Question(E)": "What is an example of a fundamental filter?",
+    "Question(TC)": "下列哪一項為基本面篩選條件的例子？",
+    A: "Volume above 1 million shares<br>成交量超過 100 萬股",
+    B: "P/E ratio below 15<br>本益比低於 15",
+    C: "Price crossing above the 50-day moving average<br>股價穿越 50 日均線",
+    D: "RSI below 30<br>RSI 低於 30",
+    Ans: "B"
+  },
+  {
+    "QID": 78,
+    "Question(E)": "Which of the following is NOT a typical criterion for filtering stocks?",
+    "Question(TC)": "下列哪一項不是篩選股票的典型標準？",
+    A: "Company logo<br>公司標誌",
+    B: "Market capitalization<br>市值",
+    C: "Dividend yield<br>股息殖利率",
+    D: "Return on equity<br>股東權益報酬率",
+    Ans: "A"
+  },
+  {
+    "QID": 79,
+    "Question(E)": "What is a limitation of stock filtering and screening?",
+    "Question(TC)": "股票篩選的限制是什麼？",
+    A: "It always produces the best-performing stocks<br>一定能篩出最佳效股票",
+    B: "It is only used by technical analysts<br>僅技術分析師使用",
+    C: " It requires no input from investors<br>不需投資人參與",
+    D: "It may concentrate results in certain sectors and can be affected by biases<br>結果可能集中於特定產業且受偏誤影響",
+    Ans: "D"
+  },
+{
+    "QID": 80,
+    "Question(E)": "What is the primary purpose of the MetaTrader5 Python package?",
+    "Question(TC)": "MetaTrader5 Python 套件的主要用途是什麼？",
+    A: "To backtest trading strategies using historical data<br>用歷史數據回測交易策略",
+    B: "To create custom indicators for TradingView<br>為 TradingView 創建自訂指標",
+    C: "To interact with MT5 for tasks like retrieving market data and placing trades<br>用來與 MT5 互動，如獲取市場資料與下單",
+    D: "To optimize options strategies using Greeks<br>用來優化選擇權策略，使用希臘值",
+    Ans: "C"
+  },
+  {
+    "QID": 81,
+    "Question(E)": "Which Greek measures an option's sensitivity to changes in volatility?",
+    "Question(TC)": "哪個希臘值衡量期權對波動性變化的敏感度？",
+    A: "Delta",
+    B: "Theta",
+    C: "Vega<",
+    D: "Gamma",
+    Ans: "C"
+  },
+  {
+    "QID": 82,
+    "Question(E)": "What is the primary goal of position sizing in algorithmic trading?",
+    "Question(TC)": "演算法交易中部位規模管理的主要目的是什麼？",
+    A: "Maximizing trade frequency<br>最大化交易頻率",
+    B: "Managing risk exposure per trade to protect capital<br>控管每筆交易風險，保護資本",
+    C: "Eliminating all market volatility<br>消除所有市場波動",
+    D: "Guaranteeing daily profits<br>保證每日獲利",
+    Ans: "B"
+  },
+  {
+    "QID": 83,
+    "Question(E)": "How does the Martingale strategy increase risk during losing streaks?",
+    "Question(TC)": "馬丁格爾策略在連續虧損時如何增加風險？",
+    A: "By doubling position sizes to recover losses, demanding exponential capital<br>每次虧損後加倍部位，需大量資本",
+    B: "By halving position sizes after losses<br>每次虧損後減半部位",
+    C: "By freezing trading activity<br>凍結交易",
+    D: "By diversifying assets<br>資產分散",
+    Ans: "A"
+  },
+  {
+    "QID": 84,
+    "Question(E)": "Which technique dynamically adjusts stop-loss levels based on volatility?",
+    "Question(TC)": "哪種技術根據波動性動態調整止損點位？",
+    A: "Trailing stop tied to Average True Range (ATR)<br>與平均真實區間（ATR）掛勾的追蹤止損",
+    B: "Fixed stop-loss<br>固定止損",
+    C: "Time-based exit<br>時間到期平倉",
+    D: "Profit-target-only orders<br>僅設定目標價格的訂單",
+    Ans: "A"
+  },
+  {
+    "QID": 85,
+    "Question(E)": "How does hedging enhance money management?",
+    "Question(TC)": "對沖如何提升資金管理？",
+    A: "By increasing directional market exposure<br>增加市場曝險",
+    B: "By eliminating all transaction costs<br>消除所有交易成本",
+    C: "By offsetting losses in one position with gains in a correlated asset<br>用相關資產的獲利抵消損失",
+    D: "By avoiding backtesting<br>避免回測",
+    Ans: "C"
+  },
+  {
+    "QID": 86,
+    "Question(E)": "What causes overfitting in strategy optimization?",
+    "Question(TC)": "策略最佳化中，過度擬合的原因為何？",
+    A: "Testing on out-of-sample data<br>在樣本外數據測試",
+    B: "Tailoring parameters too closely to historical data, reducing real-world robustness<br>參數過度貼合歷史資料，降低實盤穩健性",
+    C: "Using Monte Carlo simulations<br>使用蒙地卡羅模擬",
+    D: "Ignoring transaction costs<br>忽略交易成本",
+    Ans: "B"
+  },
+  {
+    "QID": 87,
+    "Question(E)": "What is a key risk of high leverage in money management?",
+    "Question(TC)": "高槓桿在資金管理中的關鍵風險是什麼？",
+    A: "Reduced capital requirements<br>降低資本需求",
+    B: "Amplified losses during volatile events<br>在市場波動事件中擴大虧損",
+    C: "Guaranteed annual returns<br>保證年報酬",
+    D: "Lower slippage<br>降低滑價",
+    Ans: "B"
+  },
+  {
+    "QID": 88,
+    "Question(E)": "How are Greeks used in options risk management?",
+    "Question(TC)": "希臘值如何用於期權風險管理？",
+    A: "To ignore volatility<br>忽略波動性",
+    B: "To hedge exposures (e.g., Delta-neutral strategies)<br>對沖曝險（如 Delta 中性策略）",
+    C: "To minimize transaction costs<br>降低交易成本",
+    D: "To reduce expected returns<br>降低預期回報",
+    Ans: "B"
+  },
+  {
+    "QID": 89,
+    "Question(E)": "How does hedging enhance money management?",
+    "Question(TC)": "對沖如何提升資金管理？",
+    A: "By increasing directional market exposure<br>增加市場曝險",
+    B: "By offsetting losses in one position with gains in a correlated asset<br>用相關資產的獲利抵消損失",
+    C: "By eliminating all transaction costs<br>消除所有交易成本",
+    D: "By avoiding backtesting<br>避免回測",
+    Ans: "B"
+  },
+  {
+    "QID": 90,
+    "Question(E)": "If an investor short (writes) a put option, what is their primary obligation?",
+    "Question(TC)": "若投資人賣出（寫出）賣權，主要義務為何？",
+    A: "To buy the underlying asset at the strike price if the buyer exercises<br>若買方執行，需以履約價買進標的資產",
+    B: "To sell the underlying asset at the strike price<br>以履約價賣出標的資產",
+    C: "To pay the premium to the buyer<br>向買方支付權利金",
+    D: "To hold the underlying asset until expiration<br>持有標的資產至到期",
+    Ans: "A"
+  },
+
+  {
+    "QID": 91,
+    "Question(E)": "An investor buys a put option with a strike price of $100 for a premium of $5. If the market price at expiration is $85, what is their profit per share?",
+    "Question(TC)": "投資人以 5 美元權利金買入履約價 100 美元的賣權，到期時市價為 85 美元，每股獲利為多少？",
+    A: "$10",
+    B: "$15",
+    C: "$20",
+    D: "$5",
+    Ans: "A"
+  },
+  {
+    "QID": 92,
+    "Question(E)": "Why might a simple \"buy low, sell high\" bot fail in live markets?",
+    "Question(TC)": "為什麼簡單的「低買高賣」機器人在實盤市場可能失敗？",
+    A: "Ignores transaction costs and trend volatility<br>忽略交易成本與趨勢波動",
+    B: "Uses advanced machine learning<br>使用進階機器學習",
+    C: "Relies on hourly data<br>依賴小時資料",
+    D: "Requires no API integration<br>不需 API 整合",
+    Ans: "A"
+  },
+  {
+    "QID": 93,
+    "Question(E)": "What is a critical first step when building a Python trading bot?",
+    "Question(TC)": "建立 Python 交易機器人的關鍵第一步是什麼？",
+    A: "Deploying to live markets immediately<br>立即部署至實盤",
+    B: "Backtesting strategies on historical data<br>用歷史數據回測策略",
+    C: "Skipping risk management<br>略過風險管理",
+    D: "Using unverified APIs<br>使用未驗證 API",
+    Ans: "B"
+  },
+  {
+    "QID": 94,
+    "Question(E)": "What is a key limitation of using CSV files for backtesting?",
+    "Question(TC)": "使用 CSV 檔案回測的主要限制是什麼？",
+    A: "Ignores real-time market dynamics like slippage<br>忽略滑價等即時市場動態",
+    B: "Guarantees live trading accuracy<br>保證實盤精準",
+    C: "Simplifies machine learning<br>簡化機器學習",
+    D: "Reduces data storage needs<br>降低資料儲存需求",
+    Ans: "A"
+  },
+  {
+    "QID": 95,
+    "Question(E)": "Which Python library is essential for handling financial time-series data?",
+    "Question(TC)": "哪個 Python 函式庫對於處理金融時間序列資料至關重要？",
+    A: "TensorFlow",
+    B: "PyGame",
+    C: "Pandas",
+    D: "Django",
+    Ans: "C"
+  },
+  {
+    "QID": 96,
+    "Question(E)": "Which Pine Script function is used to create a custom strategy?",
+    "Question(TC)": "哪個 Pine Script 函數可用於建立自訂策略？",
+    A: "trade()",
+    B: "customStrategy()",
+    C: "strategy()",
+    D: "indicator()",
+    Ans: "C"
   }
 ];
 
@@ -1209,7 +1212,7 @@ const questions = [
         if (q[opt] !== undefined && q[opt] !== "") {
           const btn = document.createElement('button');
           btn.className = 'choice';
-          btn.innerHTML = `<b>${opt}.</b> ${q[opt].replace('\n', '<br>')}`;
+          btn.innerHTML = `<b>${opt}.</b> ${q[opt].replace(/<br>/g, '')}`;
           btn.onclick = () => selectAnswer(opt, btn);
           choicesDiv.appendChild(btn);
         }
@@ -1247,6 +1250,7 @@ const questions = [
       if (currentIndex < examQuestions.length - 1) {
         currentIndex++;
         showQuestion();
+	answered = false;
       }
     }
 
