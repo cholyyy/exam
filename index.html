@@ -15,24 +15,6 @@
         #setup-screen { padding: 50px 20px; }
         .input-group { margin: 20px; }
         input { background: #000; border: 1px solid #0f0; color: #0f0; padding: 10px; width: 200px; text-align: center; }
-        button { background…
-[05:18, 2/1/2026] Thommm: <!DOCTYPE html>
-<html lang="zh-Hant">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>情侶專屬雷達系統</title>
-    <!-- 引入 Firebase -->
-    <script src="https://www.gstatic.com"></script>
-    <script src="https://www.gstatic.com"></script>
-    <!-- 引入 P5.js 畫圖庫 -->
-    <script src="https://cdnjs.cloudflare.com"></script>
-    
-    <style>
-        body { background: #000; color: #00ff00; font-family: 'Courier New', Courier, monospace; text-align: center; margin: 0; }
-        #setup-screen { padding: 50px 20px; }
-        .input-group { margin: 20px; }
-        input { background: #000; border: 1px solid #0f0; color: #0f0; padding: 10px; width: 200px; text-align: center; }
         button { background: #0f0; color: #000; border: none; padding: 10px 25px; cursor: pointer; font-weight: bold; }
         #radar-screen { display: none; }
         #info-panel { padding: 10px; font-size: 12px; border-bottom: 1px solid #333; }
@@ -52,6 +34,7 @@
             <p>你的代號</p>
             <input type="text" id="userName" placeholder="例如: 小明">
         </div>
+        <!-- 確保 onclick="startRadar()" 在這裡 -->
         <button onclick="startRadar()">啟動掃描器</button>
     </div>
 
@@ -67,9 +50,10 @@
 
     <script>
         // --- 1. Firebase 初始化 (請替換成你的配置) ---
+        // 請到 Firebase Console 獲取你的專屬配置並填入
         const firebaseConfig = {
-            apiKey: "AIzaSyCnw0v8T5Uw0iQWz2HL1dEEuxRILzILDZw",
-            databaseURL: "https://findyou-483a9.firebaseio.com", // <-- 已修正
+           apiKey: "AIzaSyCnw0v8T5Uw0iQWz2HL1dEEuxRILzILDZw",
+            databaseURL: "findyou-483a9.firebaseio.com",
             projectId: "findyou-483a9",
         };
         
@@ -78,7 +62,7 @@
             firebase.initializeApp(firebaseConfig);
             database = firebase.database();
         } catch (e) {
-            console.error("Firebase 初始化失敗，請檢查配置。");
+            console.error("Firebase 初始化失敗，請檢查配置。", e);
             document.getElementById('info-panel').innerText = "錯誤: Firebase 配置無效，無法同步位置。";
         }
 
@@ -93,7 +77,7 @@
             myName = document.getElementById('userName').value;
 
             if (!roomID || !myName) return alert("請填寫完整資訊");
-            if (!database) return alert("伺服器連線失敗，請檢查 Firebase 配置。");
+            if (!database) return alert("伺服器連線失敗，請檢查 Firebase 配置或連線狀態。");
 
             document.getElementById('setup-screen').style.display = 'none';
             document.getElementById('radar-screen').style.display = 'block';
@@ -104,6 +88,8 @@
                     enableHighAccuracy: true,
                     maximumAge: 1000
                 });
+            } else {
+                alert("你的瀏覽器不支援 GPS 定位。");
             }
 
             // 監聽 Firebase 數據
@@ -134,11 +120,11 @@
                 });
             }
             // 已修正使用反引號
-            document.getElementById('info-panel').innerText = 座標同步中: ${myPos.lat.toFixed(5)}, ${myPos.lon.toFixed(5)};
+            document.getElementById('info-panel').innerText = `座標同步中: ${myPos.lat.toFixed(5)}, ${myPos.lon.toFixed(5)}`;
         }
 
         function onError(err) {
-            alert("請確保開啟 GPS 定位及 HTTPS 訪問權限");
+            alert("請確保開啟 GPS 定位及使用 HTTPS 訪問權限，錯誤碼: " + err.code);
         }
 
         // --- 3. 雷達繪製 (P5.js) ---
@@ -183,11 +169,9 @@
                 // 計算距離 (大概值)
                 let d = dist(myPos.lat, myPos.lon, peerPos.lat, peerPos.lon) * 111320; 
                 // 已修正使用反引號
-                document.getElementById('dist-text').innerText = 距離對方約: ${Math.round(d)} 米;
+                document.getElementById('dist-text').innerText = `距離對方約: ${Math.round(d)} 米`;
             }
         }
     </script>
 </body>
 </html>
-
-
