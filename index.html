@@ -34,7 +34,6 @@
             <p>你的代號</p>
             <input type="text" id="userName" placeholder="例如: 小明">
         </div>
-        <!-- 確保 onclick="startRadar()" 在這裡 -->
         <button onclick="startRadar()">啟動掃描器</button>
     </div>
 
@@ -49,20 +48,21 @@
     </div>
 
     <script>
-        // --- 1. Firebase 初始化 ---
+        // --- 1. Firebase 初始化 (請替換成你的配置) ---
+        // 你可以在 Firebase 控制台獲取這段 Config
         const firebaseConfig = {
             apiKey: "AIzaSyCnw0v8T5Uw0iQWz2HL1dEEuxRILzILDZw",
-            databaseURL: "findyou-483a9.firebasestorage.app", // <-- 已修正為正確格式
+            databaseURL: "findyou-483a9.firebaseio.com",
             projectId: "findyou-483a9",
         };
         
+        // 如果沒有填 Config，這部分會報錯，實際使用時請先到 Firebase 申請
         let database;
         try {
             firebase.initializeApp(firebaseConfig);
             database = firebase.database();
         } catch (e) {
-            console.error("Firebase 初始化失敗，請檢查配置。", e);
-            document.getElementById('info-panel').innerText = "錯誤: Firebase 配置無效，無法同步位置。";
+            console.error("Firebase 初始化失敗，請檢查配置。");
         }
 
         let roomID, myName;
@@ -76,11 +76,6 @@
             myName = document.getElementById('userName').value;
 
             if (!roomID || !myName) return alert("請填寫完整資訊");
-            // 這裡捕獲你截圖中的錯誤訊息
-            if (!database) {
-                alert("伺服器連線失敗,請檢查Firebase 配置或連線狀態。");
-                return;
-            }
 
             document.getElementById('setup-screen').style.display = 'none';
             document.getElementById('radar-screen').style.display = 'block';
@@ -91,20 +86,16 @@
                     enableHighAccuracy: true,
                     maximumAge: 1000
                 });
-            } else {
-                alert("你的瀏覽器不支援 GPS 定位。");
             }
 
             // 監聽 Firebase 數據
             database.ref('rooms/' + roomID).on('value', (snapshot) => {
                 const data = snapshot.val();
-                if (data) {
-                    for (let key in data) {
-                        if (key !== myName) {
-                            peerPos.lat = data[key].lat;
-                            peerPos.lon = data[key].lon;
-                            peerName = key;
-                        }
+                for (let key in data) {
+                    if (key !== myName) {
+                        peerPos.lat = data[key].lat;
+                        peerPos.lon = data[key].lon;
+                        peerName = key;
                     }
                 }
             });
@@ -122,12 +113,11 @@
                     timestamp: Date.now()
                 });
             }
-            // 已修正使用反引號
             document.getElementById('info-panel').innerText = `座標同步中: ${myPos.lat.toFixed(5)}, ${myPos.lon.toFixed(5)}`;
         }
 
         function onError(err) {
-            alert("請確保開啟 GPS 定位及使用 HTTPS 訪問權限，錯誤碼: " + err.code);
+            alert("請確保開啟 GPS 定位及 HTTPS 訪問權限");
         }
 
         // --- 3. 雷達繪製 (P5.js) ---
@@ -154,7 +144,7 @@
             line(0, 0, 150 * cos(scanAngle), 150 * sin(scanAngle));
 
             // 計算對方相對位置 (簡化版：經緯度差距放大)
-            if (peerPos.lat !== 0 && myPos.lat !== 0) {
+            if (peerPos.lat !== 0) {
                 let dx = (peerPos.lon - myPos.lon) * 100000; // 經度差距
                 let dy = (peerPos.lat - myPos.lat) * 100000; // 緯度差距
 
@@ -171,12 +161,9 @@
 
                 // 計算距離 (大概值)
                 let d = dist(myPos.lat, myPos.lon, peerPos.lat, peerPos.lon) * 111320; 
-                // 已修正使用反引號
                 document.getElementById('dist-text').innerText = `距離對方約: ${Math.round(d)} 米`;
             }
         }
     </script>
 </body>
 </html>
-
-
