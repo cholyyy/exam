@@ -3,115 +3,166 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>商場尋人雷達 Pro</title>
+    <title>大表姐專屬雷達系統</title>
+    <!-- 引入 Firebase -->
+    <script src="https://www.gstatic.com"></script>
+    <script src="https://www.gstatic.com"></script>
+    <!-- 引入 P5.js 畫圖庫 -->
+    <script src="https://cdnjs.cloudflare.com"></script>
+    
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0a0a0a; color: #00ff00; text-align: center; margin: 0; overflow: hidden; }
-        h1 { font-size: 1.2rem; margin-top: 20px; color: #00ff00; text-shadow: 0 0 10px #00ff00; }
-        
-        /* 雷達樣式 */
-        #radar {
-            width: 300px; height: 300px; background: radial-gradient(circle, #002200 0%, #000 70%);
-            border: 2px solid #00ff00; border-radius: 50%; margin: 30px auto;
-            position: relative; overflow: hidden; box-shadow: 0 0 30px rgba(0,255,0,0.3);
-        }
-        #scanner-line {
-            width: 50%; height: 2px; background: linear-gradient(to right, transparent, #00ff00);
-            position: absolute; top: 50%; left: 50%; transform-origin: left;
-            animation: scan 3s linear infinite;
-        }
-        #target-dot {
-            width: 15px; height: 15px; background: #ff0000; border-radius: 50%;
-            position: absolute; top: 50%; left: 50%; display: none;
-            box-shadow: 0 0 15px #ff0000; transition: all 0.5s ease;
-        }
-        #arrow {
-            font-size: 50px; color: #fbff00; position: absolute;
-            top: 20px; left: 50%; transform: translateX(-50%); display: none;
-            text-shadow: 0 0 10px #fbff00;
-        }
-
-        /* 控制區 */
-        .controls { margin-top: 20px; }
-        button {
-            padding: 12px 25px; font-size: 1rem; background: transparent;
-            color: #00ff00; border: 2px solid #00ff00; border-radius: 5px;
-            cursor: pointer; transition: 0.3s;
-        }
-        button:hover { background: #00ff00; color: #000; }
-        #info { margin-top: 15px; font-size: 0.9rem; color: #888; }
-
-        @keyframes scan { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        body { background: #000; color: #00ff00; font-family: 'Courier New', Courier, monospace; text-align: center; margin: 0; }
+        #setup-screen { padding: 50px 20px; }
+        .input-group { margin: 20px; }
+        input { background: #000; border: 1px solid #0f0; color: #0f0; padding: 10px; width: 200px; text-align: center; }
+        button { background: #0f0; color: #000; border: none; padding: 10px 25px; cursor: pointer; font-weight: bold; }
+        #radar-screen { display: none; }
+        #info-panel { padding: 10px; font-size: 12px; border-bottom: 1px solid #333; }
+        .radar-canvas { position: relative; margin: 20px auto; }
     </style>
 </head>
 <body>
 
-    <h1>TARGET RADAR SYSTEM</h1>
-    
-    <div id="radar">
-        <div id="scanner-line"></div>
-        <div id="target-dot"></div>
-        <div id="arrow">↑</div>
+    <!-- 登錄畫面 -->
+    <div id="setup-screen">
+        <h1>RADAR SYSTEM</h1>
+        <div class="input-group">
+            <p>請輸入房間密碼 (雙方須一致)</p>
+            <input type="text" id="roomCode" placeholder="例如: 5201314">
+        </div>
+        <div class="input-group">
+            <p>你的代號</p>
+            <input type="text" id="userName" placeholder="例如: 大表姐">
+        </div>
+        <button onclick="startRadar()">啟動掃描器</button>
     </div>
 
-    <div class="controls">
-        <button onclick="initSystem()">啟動系統</button>
-        <div id="info">請點擊按鈕授權藍牙與指南針</div>
-        <div id="rssi">RSSI: -- dBm</div>
+    <!-- 雷達畫面 -->
+    <div id="radar-screen">
+        <div id="info-panel">偵測中...</div>
+        <div id="canvas-holder"></div>
+        <div style="margin-top: 20px;">
+            <p id="dist-text">尋找訊號中...</p>
+            <button onclick="location.reload()" style="background:transparent; color:#f00; border:1px solid #f00;">切換頻道</button>
+        </div>
     </div>
 
     <script>
-        let device, currentHeading = 0;
+        // --- 1. Firebase 初始化 (請替換成你的配置) ---
+        // 你可以在 Firebase 控制台獲取這段 Config
+        const firebaseConfig = {
+            apiKey: "AIzaSyCnw0v8T5Uw0iQWz2HL1dEEuxRILzILDZw",
+            databaseURL: "findyou-483a9.firebaseio.com",
+            projectId: "findyou-483a9",
+        };
+        
+        // 如果沒有填 Config，這部分會報錯，實際使用時請先到 Firebase 申請
+        let database;
+        try {
+            firebase.initializeApp(firebaseConfig);
+            database = firebase.database();
+        } catch (e) {
+            console.error("Firebase 初始化失敗，請檢查配置。");
+        }
 
-        async function initSystem() {
-            // 1. 請求 iOS 指南針權限 (iOS 13+)
-            if (typeof DeviceOrientationEvent.requestPermission === 'function') {
-                const permission = await DeviceOrientationEvent.requestPermission();
-                if (permission === 'granted') {
-                    window.addEventListener('deviceorientation', handleOrientation);
-                }
-            } else {
-                window.addEventListener('deviceorientation', handleOrientation);
-            }
+        let roomID, myName;
+        let myPos = { lat: 0, lon: 0 };
+        let peerPos = { lat: 0, lon: 0 };
+        let peerName = "等待對方加入...";
 
-            // 2. 啟動藍牙掃描
-            try {
-                device = await navigator.bluetooth.requestDevice({ acceptAllDevices: true });
-                document.getElementById('info').innerText = `鎖定目標: ${device.name || '未知裝置'}`;
-                
-                await device.watchAdvertisements();
-                device.addEventListener('advertisementreceived', (event) => {
-                    const rssi = event.rssi;
-                    document.getElementById('rssi').innerText = `RSSI: ${rssi} dBm`;
-                    updateRadar(rssi);
+        // --- 2. 啟動程序 ---
+        function startRadar() {
+            roomID = document.getElementById('roomCode').value;
+            myName = document.getElementById('userName').value;
+
+            if (!roomID || !myName) return alert("請填寫完整資訊");
+
+            document.getElementById('setup-screen').style.display = 'none';
+            document.getElementById('radar-screen').style.display = 'block';
+
+            // 請求 GPS 定位
+            if (navigator.geolocation) {
+                navigator.geolocation.watchPosition(onSuccess, onError, {
+                    enableHighAccuracy: true,
+                    maximumAge: 1000
                 });
-            } catch (err) {
-                document.getElementById('info').innerText = "錯誤: " + err;
             }
+
+            // 監聽 Firebase 數據
+            database.ref('rooms/' + roomID).on('value', (snapshot) => {
+                const data = snapshot.val();
+                for (let key in data) {
+                    if (key !== myName) {
+                        peerPos.lat = data[key].lat;
+                        peerPos.lon = data[key].lon;
+                        peerName = key;
+                    }
+                }
+            });
         }
 
-        function handleOrientation(event) {
-            // 獲取手機指向的方位角 (0-360)
-            currentHeading = event.webkitCompassHeading || (360 - event.alpha);
-            document.getElementById('arrow').style.transform = `translateX(-50%) rotate(${-currentHeading}deg)`;
-        }
-
-        function updateRadar(rssi) {
-            const dot = document.getElementById('target-dot');
-            const arrow = document.getElementById('arrow');
-            dot.style.display = 'block';
-            arrow.style.display = 'block';
-
-            // 將訊號強弱轉化為距離中心點的半徑 (RSSI 約 -100 到 -30)
-            const radius = Math.min(140, Math.max(20, (100 + rssi) * 2));
+        function onSuccess(position) {
+            myPos.lat = position.coords.latitude;
+            myPos.lon = position.coords.longitude;
             
-            // 注意：藍牙無法得知真實角度，此點位置僅根據訊號強弱在掃描線上擺動
-            const x = 150 + radius * Math.cos(Date.now() / 1000);
-            const y = 150 + radius * Math.sin(Date.now() / 1000);
+            // 上傳位置到 Firebase
+            if (database) {
+                database.ref('rooms/' + roomID + '/' + myName).set({
+                    lat: myPos.lat,
+                    lon: myPos.lon,
+                    timestamp: Date.now()
+                });
+            }
+            document.getElementById('info-panel').innerText = `座標同步中: ${myPos.lat.toFixed(5)}, ${myPos.lon.toFixed(5)}`;
+        }
 
-            dot.style.left = `${x}px`;
-            dot.style.top = `${y}px`;
+        function onError(err) {
+            alert("請確保開啟 GPS 定位及 HTTPS 訪問權限");
+        }
 
-            if (rssi > -50 && navigator.vibrate) navigator.vibrate(200);
+        // --- 3. 雷達繪製 (P5.js) ---
+        function setup() {
+            let canvas = createCanvas(320, 320);
+            canvas.parent('canvas-holder');
+            angleMode(DEGREES);
+        }
+
+        function draw() {
+            background(0, 15); // 雷達殘影
+            translate(width / 2, height / 2);
+
+            // 畫雷達圈
+            stroke(0, 255, 0, 80);
+            noFill();
+            ellipse(0, 0, 100);
+            ellipse(0, 0, 200);
+            ellipse(0, 0, 300);
+
+            // 畫掃描線
+            let scanAngle = frameCount * 3 % 360;
+            stroke(0, 255, 0);
+            line(0, 0, 150 * cos(scanAngle), 150 * sin(scanAngle));
+
+            // 計算對方相對位置 (簡化版：經緯度差距放大)
+            if (peerPos.lat !== 0) {
+                let dx = (peerPos.lon - myPos.lon) * 100000; // 經度差距
+                let dy = (peerPos.lat - myPos.lat) * 100000; // 緯度差距
+
+                // 限制在雷達圈內
+                let targetX = constrain(dx, -140, 140);
+                let targetY = constrain(-dy, -140, 140); // 緯度 Y 軸相反
+
+                // 畫對方點
+                fill(255, 0, 0);
+                noStroke();
+                ellipse(targetX, targetY, 12, 12);
+                fill(0, 255, 0);
+                text(peerName, targetX + 10, targetY);
+
+                // 計算距離 (大概值)
+                let d = dist(myPos.lat, myPos.lon, peerPos.lat, peerPos.lon) * 111320; 
+                document.getElementById('dist-text').innerText = `距離對方約: ${Math.round(d)} 米`;
+            }
         }
     </script>
 </body>
