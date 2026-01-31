@@ -49,11 +49,10 @@
     </div>
 
     <script>
-        // --- 1. Firebase 初始化 (請替換成你的配置) ---
-        // 請到 Firebase Console 獲取你的專屬配置並填入
+        // --- 1. Firebase 初始化 ---
         const firebaseConfig = {
-           apiKey: "AIzaSyCnw0v8T5Uw0iQWz2HL1dEEuxRILzILDZw",
-            databaseURL: "findyou-483a9.firebaseio.com",
+            apiKey: "AIzaSyCnw0v8T5Uw0iQWz2HL1dEEuxRILzILDZw",
+            databaseURL: "https://findyou-483a9.firebaseio.com", // <-- 已修正為正確格式
             projectId: "findyou-483a9",
         };
         
@@ -77,7 +76,11 @@
             myName = document.getElementById('userName').value;
 
             if (!roomID || !myName) return alert("請填寫完整資訊");
-            if (!database) return alert("伺服器連線失敗，請檢查 Firebase 配置或連線狀態。");
+            // 這裡捕獲你截圖中的錯誤訊息
+            if (!database) {
+                alert("伺服器連線失敗,請檢查Firebase 配置或連線狀態。");
+                return;
+            }
 
             document.getElementById('setup-screen').style.display = 'none';
             document.getElementById('radar-screen').style.display = 'block';
