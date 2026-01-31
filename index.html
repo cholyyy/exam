@@ -1,198 +1,118 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Password Authorization</title>
-<style>
-body {
-    font-family: Arial, sans-serif, "Microsoft JhengHei", sans-serif;
-    margin: 5vw 8vw 40px 8vw;
-    background: yellow;
-    background-size: auto;
-    animation: none;
-    color: #333;
-    position: relative;
-    overflow-x: hidden;
-    min-height: 100vh;
-  }
-  h2 {
-    text-align: center;
-    color: #fff;
-    text-shadow: 2px 2px 5px #000;
-    margin-bottom: 20px;
-  }
-  input[type=password] {
-    width: 100%;
-    max-width: 400px;
-    padding: 14px 20px;
-    margin: 0 auto 20px auto;
-    display: block;
-    border-radius: 8px;
-    border: 2px solid #fff;
-    font-size: 18px;
-    box-shadow: 0 0 8px #fff;
-    outline: none;
-    transition: 0.3s;
-  }
-  input[type=password]:focus {
-    border-color: #ffeb3b;
-    box-shadow: 0 0 15px #ffeb3b;
-  }
-  button {
-    display: block;
-    width: 100%;
-    max-width: 400px;
-    padding: 14px;
-    margin: 0 auto;
-    background: #ff4081;
-    border: none;
-    border-radius: 8px;
-    color: white;
-    font-weight: bold;
-    font-size: 18px;
-    cursor: pointer;
-    box-shadow: 0 0 8px #ff4081;
-    transition: 0.3s;
-  }
-  button:hover {
-    background: #f50057;
-    box-shadow: 0 0 15px #f50057;
-  }
-  #message {
-    margin-top: 30px;
-    font-weight: bold;
-    white-space: pre-wrap;
-    color: green;
-    max-width: 400px;
-    margin-left: auto;
-    margin-right: auto;
-    background: rgba(255, 255, 255, 0.85);
-    padding: 20px;
-    border-radius: 12px;
-    text-align: center;
-    box-shadow: 0 0 15px #fff;
-    position: relative;
-    z-index: 10;
-  }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商場尋人雷達 Pro</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0a0a0a; color: #00ff00; text-align: center; margin: 0; overflow: hidden; }
+        h1 { font-size: 1.2rem; margin-top: 20px; color: #00ff00; text-shadow: 0 0 10px #00ff00; }
+        
+        /* 雷達樣式 */
+        #radar {
+            width: 300px; height: 300px; background: radial-gradient(circle, #002200 0%, #000 70%);
+            border: 2px solid #00ff00; border-radius: 50%; margin: 30px auto;
+            position: relative; overflow: hidden; box-shadow: 0 0 30px rgba(0,255,0,0.3);
+        }
+        #scanner-line {
+            width: 50%; height: 2px; background: linear-gradient(to right, transparent, #00ff00);
+            position: absolute; top: 50%; left: 50%; transform-origin: left;
+            animation: scan 3s linear infinite;
+        }
+        #target-dot {
+            width: 15px; height: 15px; background: #ff0000; border-radius: 50%;
+            position: absolute; top: 50%; left: 50%; display: none;
+            box-shadow: 0 0 15px #ff0000; transition: all 0.5s ease;
+        }
+        #arrow {
+            font-size: 50px; color: #fbff00; position: absolute;
+            top: 20px; left: 50%; transform: translateX(-50%); display: none;
+            text-shadow: 0 0 10px #fbff00;
+        }
 
-  .floating-text {
-    position: absolute;
-    font-size: 48px;
-    font-weight: bold;
-    font-style: italic;
-    background: linear-gradient(45deg, #ff6b6b, #ffcc5c, #53a7ff, #70de79, #da68a7);
-    background-size: 300% 300%;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation: floatUpDown 6s ease-in-out infinite, backgroundShift 10s linear infinite;
-    user-select: none;
-    z-index: 1; 
-  }
+        /* 控制區 */
+        .controls { margin-top: 20px; }
+        button {
+            padding: 12px 25px; font-size: 1rem; background: transparent;
+            color: #00ff00; border: 2px solid #00ff00; border-radius: 5px;
+            cursor: pointer; transition: 0.3s;
+        }
+        button:hover { background: #00ff00; color: #000; }
+        #info { margin-top: 15px; font-size: 0.9rem; color: #888; }
 
-  @keyframes floatUpDown {
-    0%, 100% {
-      transform: translateY(0);
-      opacity: 0.9;
-    }
-    50% {
-      transform: translateY(-30px);
-      opacity: 1;
-    }
-  }
-
-  @keyframes backgroundShift {
-    0% {
-      background-position: 0% 50%;
-    }
-    50% {
-      background-position: 100% 50%;
-    }
-    100% {
-      background-position: 0% 50%;
-    }
-  }
- 
-  .floating-text:nth-child(1) {
-    left: 12%;
-    bottom: 20px;
-    animation-delay: 0s, 0s;
-  }
-  .floating-text:nth-child(2) {
-    left: 32%;
-    bottom: 40px;
-    animation-delay: 1.5s, 2s;
-  }
-  .floating-text:nth-child(3) {
-    left: 52%;
-    bottom: 10px;
-    animation-delay: 3s, 4s;
-  }
-  .floating-text:nth-child(4) {
-    left: 72%;
-    bottom: 30px;
-    animation-delay: 4.5s, 6s;
-  }
-  .floating-text:nth-child(5) {
-    left: 88%;
-    bottom: 15px;
-    animation-delay: 6s, 8s;
-  }
-  
-  .star {
-    position: absolute;
-    width: 5px;
-    height: 5px;
-    background: white;
-    border-radius: 50%;
-    opacity: 0.8;
-    animation: twinkle 2s infinite ease-in-out alternate;
-  }
-  .star:nth-child(6) { left: 20%; top: 20%; animation-delay: 0s; }
-  .star:nth-child(7) { left: 70%; top: 40%; animation-delay: 0.5s; }
-  .star:nth-child(8) { left: 50%; top: 10%; animation-delay: 1s; }
-  .star:nth-child(9) { left: 85%; top: 25%; animation-delay: 1.5s; }
-  .star:nth-child(10) { left: 30%; top: 30%; animation-delay: 2s; }
-  @keyframes twinkle {
-    0%, 100% { opacity: 0.2; }
-    50% { opacity: 1; }
-  }
-</style>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8"></meta>
+        @keyframes scan { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    </style>
 </head>
 <body>
-<h2>Enter Yu Password !!!</h2>
-<input type="password" id="passwordInput" placeholder="Enter password" />
-<button onClick="checkPassword()">Submit</button>
-<div id="message"></div>
 
+    <h1>TARGET RADAR SYSTEM</h1>
+    
+    <div id="radar">
+        <div id="scanner-line"></div>
+        <div id="target-dot"></div>
+        <div id="arrow">↑</div>
+    </div>
 
-<div class="floating-text">Yu</div>
-<div class="floating-text">Yu</div>
-<div class="floating-text">Yu</div>
-<div class="floating-text">Yu</div>
-<div class="floating-text">Yu</div>
+    <div class="controls">
+        <button onclick="initSystem()">啟動系統</button>
+        <div id="info">請點擊按鈕授權藍牙與指南針</div>
+        <div id="rssi">RSSI: -- dBm</div>
+    </div>
 
+    <script>
+        let device, currentHeading = 0;
 
-<div class="star"></div>
-<div class="star"></div>
-<div class="star"></div>
-<div class="star"></div>
-<div class="star"></div>
+        async function initSystem() {
+            // 1. 請求 iOS 指南針權限 (iOS 13+)
+            if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+                const permission = await DeviceOrientationEvent.requestPermission();
+                if (permission === 'granted') {
+                    window.addEventListener('deviceorientation', handleOrientation);
+                }
+            } else {
+                window.addEventListener('deviceorientation', handleOrientation);
+            }
 
-<script>
-  function checkPassword() {
-    const password = document.getElementById('passwordInput').value;
-    const messageDiv = document.getElementById('message');
-    if (password === 'minecraft') {
-      messageDiv.style.color = 'Green';
-      messageDiv.textContent = `Hello 小魚🐠 這是遲來的驚喜🪳
-而家係9月7號17:33 啱啱我同aty係倉整緊呢本嘢比你 你咁啱打比Thomas問水蜜桃 然後Thomas係度挑撥離間囉😠 希望你唔會偷偷唔開心啦T T 我地有好好準備你嘅生日！話咁快就識咗7年 你一直都係嗰個 成日可以帶比人歡樂嘅余潔瀅！其實我都好開心可以同你frd返㗎 不過冇特別同你講過囉 因為好似好好笑咁 呢年半時間？同你地戇戇鳩鳩咁做咗好多嘢 係好開心嘅回憶！然後其實我冇乜特別嘢講 但係就係想寫啲嘢比你><  希望20歲嘅你 可以更加勇敢 有勇氣去做你想做嘅所有嘢 繼續幸福快樂 一直做我的世界~ 下年你生日應承你 陪你去一次生日trip ❛˓◞˂̵✧`;
-    } else {
-      messageDiv.style.color = 'red';
-      messageDiv.textContent = 'Incorrect password, please try again.';
-    }
-  }
-</script>
+            // 2. 啟動藍牙掃描
+            try {
+                device = await navigator.bluetooth.requestDevice({ acceptAllDevices: true });
+                document.getElementById('info').innerText = `鎖定目標: ${device.name || '未知裝置'}`;
+                
+                await device.watchAdvertisements();
+                device.addEventListener('advertisementreceived', (event) => {
+                    const rssi = event.rssi;
+                    document.getElementById('rssi').innerText = `RSSI: ${rssi} dBm`;
+                    updateRadar(rssi);
+                });
+            } catch (err) {
+                document.getElementById('info').innerText = "錯誤: " + err;
+            }
+        }
+
+        function handleOrientation(event) {
+            // 獲取手機指向的方位角 (0-360)
+            currentHeading = event.webkitCompassHeading || (360 - event.alpha);
+            document.getElementById('arrow').style.transform = `translateX(-50%) rotate(${-currentHeading}deg)`;
+        }
+
+        function updateRadar(rssi) {
+            const dot = document.getElementById('target-dot');
+            const arrow = document.getElementById('arrow');
+            dot.style.display = 'block';
+            arrow.style.display = 'block';
+
+            // 將訊號強弱轉化為距離中心點的半徑 (RSSI 約 -100 到 -30)
+            const radius = Math.min(140, Math.max(20, (100 + rssi) * 2));
+            
+            // 注意：藍牙無法得知真實角度，此點位置僅根據訊號強弱在掃描線上擺動
+            const x = 150 + radius * Math.cos(Date.now() / 1000);
+            const y = 150 + radius * Math.sin(Date.now() / 1000);
+
+            dot.style.left = `${x}px`;
+            dot.style.top = `${y}px`;
+
+            if (rssi > -50 && navigator.vibrate) navigator.vibrate(200);
+        }
+    </script>
 </body>
 </html>
