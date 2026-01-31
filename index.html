@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>大表姐專屬雷達系統</title>
+    <title>情侶專屬雷達系統</title>
     <!-- 引入 Firebase -->
     <script src="https://www.gstatic.com"></script>
     <script src="https://www.gstatic.com"></script>
@@ -32,7 +32,7 @@
         </div>
         <div class="input-group">
             <p>你的代號</p>
-            <input type="text" id="userName" placeholder="例如: 大表姐">
+            <input type="text" id="userName" placeholder="例如: 小明">
         </div>
         <button onclick="startRadar()">啟動掃描器</button>
     </div>
@@ -56,13 +56,13 @@
             projectId: "findyou-483a9",
         };
         
-        // 如果沒有填 Config，這部分會報錯，實際使用時請先到 Firebase 申請
         let database;
         try {
             firebase.initializeApp(firebaseConfig);
             database = firebase.database();
         } catch (e) {
             console.error("Firebase 初始化失敗，請檢查配置。");
+            document.getElementById('info-panel').innerText = "錯誤: Firebase 配置無效，無法同步位置。";
         }
 
         let roomID, myName;
@@ -76,6 +76,7 @@
             myName = document.getElementById('userName').value;
 
             if (!roomID || !myName) return alert("請填寫完整資訊");
+            if (!database) return alert("伺服器連線失敗，請檢查 Firebase 配置。");
 
             document.getElementById('setup-screen').style.display = 'none';
             document.getElementById('radar-screen').style.display = 'block';
@@ -91,11 +92,13 @@
             // 監聽 Firebase 數據
             database.ref('rooms/' + roomID).on('value', (snapshot) => {
                 const data = snapshot.val();
-                for (let key in data) {
-                    if (key !== myName) {
-                        peerPos.lat = data[key].lat;
-                        peerPos.lon = data[key].lon;
-                        peerName = key;
+                if (data) {
+                    for (let key in data) {
+                        if (key !== myName) {
+                            peerPos.lat = data[key].lat;
+                            peerPos.lon = data[key].lon;
+                            peerName = key;
+                        }
                     }
                 }
             });
@@ -113,7 +116,7 @@
                     timestamp: Date.now()
                 });
             }
-            document.getElementById('info-panel').innerText = `座標同步中: ${myPos.lat.toFixed(5)}, ${myPos.lon.toFixed(5)}`;
+            document.getElementById('info-panel').innerText = 座標同步中: ${myPos.lat.toFixed(5)}, ${myPos.lon.toFixed(5)};
         }
 
         function onError(err) {
@@ -144,7 +147,7 @@
             line(0, 0, 150 * cos(scanAngle), 150 * sin(scanAngle));
 
             // 計算對方相對位置 (簡化版：經緯度差距放大)
-            if (peerPos.lat !== 0) {
+            if (peerPos.lat !== 0 && myPos.lat !== 0) {
                 let dx = (peerPos.lon - myPos.lon) * 100000; // 經度差距
                 let dy = (peerPos.lat - myPos.lat) * 100000; // 緯度差距
 
@@ -161,7 +164,7 @@
 
                 // 計算距離 (大概值)
                 let d = dist(myPos.lat, myPos.lon, peerPos.lat, peerPos.lon) * 111320; 
-                document.getElementById('dist-text').innerText = `距離對方約: ${Math.round(d)} 米`;
+                document.getElementById('dist-text').innerText = 距離對方約: ${Math.round(d)} 米;
             }
         }
     </script>
